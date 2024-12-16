@@ -1,0 +1,101 @@
+% SETTINGS - LATEX
+% to change name, title, supervisor etc. go to preamble/preamble.tex
+\newcommand{\myFontSize}[0] {12pt}
+\newcommand{\mySpacing}[0] {1.5}
+\newcommand{\myBibliography}[0] {bib/refs, appendices/refs1}
+
+\documentclass[12pt,a4paper,twoside]{book}
+
+% Use babel for language support
+\usepackage[english]{babel}
+
+\include{preamble/preamble}
+
+\begin{document}
+
+% Minted
+% pygmentize -L styles
+%\usemintedstyle{autumn}
+
+% Title page
+\include{preamble/title}
+
+% Annotation
+\include{preamble/annotation}
+
+% Acknowledgements
+\include{preamble/acknowledgements}
+
+% Table of contents
+\tableofcontents{}
+
+% List of listings
+%\listoffigures\newpage{}
+%\renewcommand\listoflistingscaption{List of Listings}
+%\listoflistings\newpage{}
+
+% References segment
+\begin{refsegment}
+
+% Introduction
+\clearpage\null
+\input{content/intro}
+
+% Chapter 1
+\clearpage\null
+\input{content/comp_vision}
+
+% Chapter 2
+\clearpage\null
+\input{content/dnn}
+
+% Chapter 3
+\clearpage\null
+\input{content/dl_in_medicine}
+
+% ----- IN FINAL WORK -----
+% Evaluation
+%\clearpage\null
+%\input{content/eva}
+% -------------------------
+
+% Related Work
+\clearpage\null
+\input{content/related}
+
+% Solution Concept
+\clearpage\null
+\input{content/solution_concept}
+
+% Preliminary Experiments
+\clearpage\null
+\input{content/prelim_exp}
+
+% ----- IN FINAL WORK -----
+% Conclusion
+%\clearpage\null
+%\input{content/conclusion}
+
+% Resume
+%\clearpage\null
+%\input{content/resume}
+% -------------------------
+
+% Bibliography
+\clearpage\null
+\printbibliography[heading=references,segment=\therefsegment,resetnumbers=true]
+
+\end{refsegment}
+
+% ----- IN FINAL WORK -----
+% Appendix
+% \appendix
+
+% \clearpage\null
+% \include{appendices/appendix1}
+
+% \clearpage\null
+% \include{appendices/cdrom}
+% -------------------------
+
+\end{document}
