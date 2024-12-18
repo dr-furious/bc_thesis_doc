@@ -3,7 +3,7 @@
 The history of artificial neural networks (ANN) dates back to 1943. In \cite{McCulloch1943} authors tried to mathematically describe the activity of biological neurons in the human brain. Using these principles they built a first artificial neuron and artificial neural network. In 1974 a PhD student, Paul Werbos, introduced in \cite{Werbos1974} the idea of backpropagation of errors by which ANN are able to learn other than linearly separable problems, and this idea was further expanded in \cite{Rumelhart1986}. Artificial neural networks that contain many hidden layers are also called deep neural networks (DNN) and the process of training this network is called deep learning \cite{LeCun2015}. Over the years deep learning and one of its variants - convolutional neural network that was proposed in \cite{LeCun2015-2} - were found to be very effective and precise in domains that were found unreachable by the classical AI and ML algorithms \cite{LeCun2015}. This was caused by their ability to capture abstract and complex patterns that simpler models found impossible to catch. Such examples include analysis of image data \cite{Farabet2013, Alzubaidi2021} and recent advancements in natural language processing (NLP) \cite{Deng2018}.
 
 \section{Structure}
-The fundamental part of every artificial neural network is the neuron. Neuron is basically a function which has one or more inputs and one output. Inside of this neuron, a mathematical computation is being done in order to transform input into output. Input can also be referred to as input vector or vector of input features. Each input feature has its weight by which it is multiplied. Next a bias is added to the multiplied and summed features and weights. This calculation is still linear so in order for it to be able to capture more complex patterns, we need to apply non-linear activation function to its output. The mathematical representation of artificial neuron can be seen in the equation bellow.
+The fundamental part of every artificial neural network is the neuron. Neuron is basically a function which has one or more inputs and one output. Inside of this neuron, a mathematical computation is being done in order to transform input into output. Input can also be referred to as input vector or vector of input features. Each input feature has its weight by which it is multiplied. Next a bias is added to the multiplied and summed features and weights. This calculation is still linear so in order for it to be able to capture more complex patterns, we need to apply non-linear activation function to its output. The mathematical representation of artificial neuron can be seen in the equation bellow:
 
 \begin{align}
     z &= b + \sum_{i=1}^n (w_i x_i) \\
@@ -22,7 +22,45 @@ Visual example of artificial neuron can be seen in figure \ref{tab:artificial-ne
 \label{tab:artificial-neuron}
 \end{figure}
 
+\subsection{Activation Functions}
+
+\subsection{Layers}
+
 Similarly to biological neural networks, when artificial neurons are chained together, meaning the output from one neuron is passed to another neuron, they create an artificial neural network.
+
+This network is organized in layers. Neurons in each layer are not connected together, but rather every neuron from layer \textit{L} is connected with every neuron from layer \textit{L+1}, except neurons in the first (input) layer. For better understanding, we will refer to the figure \ref{tab:artificial-nn} where we can see an example of a neural network.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=8cm]{assets/images/neural_net.png}
+\par\end{centering}
+\caption{Example of deep artificial neural network \cite{TalaeiKhoei2023}}
+\label{tab:artificial-nn}
+\end{figure}
+
+Neural network can be split into three main parts:
+
+\begin{itemize}
+    \item An input layer
+    \item Hidden layers
+    \item Output layer
+\end{itemize}
+
+Input layer is the initial layer and the only layer that does not contain neurons which perform calculations but rather consists of \textit{N} input features $x_1, x_2, \dots, x_N$ also referred to as a vector $\vec{x}$ of input features:
+
+\[
+\vec{x} = \begin{bmatrix}
+x_1 \\
+x_2 \\
+\vdots \\
+x_N
+\end{bmatrix}
+\]
+
+The subsequent layers between the input layer and output layer are called hidden layers. The name comes from the fact that their outputs are not directly observable, nor are they provided by the external environment - they are internal to the network's architecture. Neurons inside these layers perform calculations on the input and produce output, which is then fed forward to the next layer.
+
+The final output layer produces an output of the network. Output and number of neurons depend on the task the network is being trained for. For regression task one neuron is often suitable - it predicts a continuous variable \cite{Goodfellow2016}. During classification task it can further depend on the nature of the classification. In binary classification, again a single neuron can suffice. It will display a probability of the input belonging to one of the classes - if the probability is high, it will assign that class to it, and if the probability is low, it will assign the other class to it \cite{Goodfellow2016}. In multi-class classification, the number of neurons is the same as the number of classes and each neuron predicts a probability of the input belonging to one specific class \cite{Goodfellow2016}.
+
 %TODO: input, hidden, output layer, deep nn, image
 
 \section{Loss Functions}
