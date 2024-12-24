@@ -279,7 +279,7 @@ There are many optimization techniques which are capable of further enhancing th
 \end{itemize}
 
 \paragraph{Regularization}
-Another set of techniques that can improve model performance is regularization. Usually, a model's performance and prediction capabilities improve during training. Available data are often split into three subsets for training, validation, and testing. The model is, obviously, trained using the training subset. The validation subset is used to check model performance during training, and the test subset is used for the final evaluation of the model. It is important that both validation and test subsets contain samples the model has not yet seen during training - otherwise, the results would be biased. A good model should be robust and generalize well, not only learn patterns that are specific for training data. Sometimes we can observe an effect when, at the beginning of the training, both training and validation performance (such as error value) improve, but later the validation performance plateaus or worsens - this effect is called overfitting \cite{Schaffer1993} and is displayed on figure \ref{fig:overfitting}. 
+Another set of techniques that can improve model performance is regularization. Usually, a model's performance and prediction capabilities improve during training. Available data are often split into three subsets for training, validation, and testing. The model is, obviously, trained using the training subset. The validation subset is used to check model performance during training, and the test subset is used for the final evaluation of the model. It is important that both validation and test subsets contain samples the model has not yet seen during training - otherwise, the results would be biased. A good model should be robust and generalize well, not only learn patterns that are specific for training data. Sometimes, especially in more complex models, we can observe an effect when, at the beginning of the training, both training and validation performance (such as error value) improve, but later the validation performance plateaus or worsens - this effect is called overfitting \cite{Schaffer1993} and is displayed in figure \ref{fig:overfitting}. 
 
 \begin{figure}[H]
 \begin{centering}
@@ -294,7 +294,7 @@ This effect is not desired because it means that the model cannot generalize wel
 
 
 \section{Evaluation Metrics}
-When evaluating a model's performance, various different metrics exist that can be used. During binary classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
+When evaluating a model's performance, various different metrics exist that can be used. The evaluation metrics also depend on the task the model was trained for. During binary classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
 
 \begin{itemize}
     \item True Positives (TP) - a model assigns the true label to a sample that has true label,
@@ -305,7 +305,7 @@ When evaluating a model's performance, various different metrics exist that can 
 
 We will briefly describe some of the evaluation metrics in the following paragraphs. 
 
-\paragraph{Accuracy, Precision, Recall, and F1 Score} Calculation of these basic metrics is displayed in equations \ref{eq:accuracy}, \ref{eq:precision}, \ref{eq:recall}, and \ref{eq:f1}. They ale describe relationships between number of samples belonging to either true positive (TP), true negative (TN), false positive (FP), or false negative (FN) group.
+\paragraph{Accuracy, Precision, Recall, and F1 Score} Calculation of these basic metrics is displayed in equations \ref{eq:accuracy}, \ref{eq:precision}, \ref{eq:recall}, and \ref{eq:f1}. They describe the relationships between the number of samples belonging to either the true positive (TP), true negative (TN), false positive (FP), or false negative (FN) groups.
 
 \begin{align}
 \label{eq:accuracy}
@@ -349,4 +349,11 @@ The ROC Space and example of ROC Curve is displayed in figure \ref{fig:roc}. Are
 \begin{align}
 \label{eq:iou}
 \text{IoU} &= \frac{y \cap \hat{y}}{y \cup \hat{y}}
+\end{align}
+
+\paragraph{Dice Coefficient} Similarly to the IoU, the Dice Coefficient is used for image segmentation and detection tasks \cite{Hu2023}, and the closer the resulting value is to 1 the better the model predictions are. Its computation is given by the equation \ref{eq:dice}, where $y$ is the true area and $\hat{y}$ is the area predicted by the model.
+
+\begin{align}
+\label{eq:dice}
+\text{DiceCoefficient} &= \frac{2|y \cap \hat{y}|}{|y| + |\hat{y}|}
 \end{align}
