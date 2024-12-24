@@ -251,12 +251,102 @@ A_L &= \varphi(Z)
 The final output layer will then return the predicted output value for each sample. At the beginning of the training, the output values will be almost random, but as the training continues, the predicted values should converge towards the ground truth values - this is the desired behaviour.
 
 \paragraph{Cost function computation}
-After the sample (or samples) are fed forward through the network, we get either a vector of output values or a single output value. Next step is to compute the error of the network using one of the aforementioned cost functions, e.g. dice loss in case of image data. The error is than propagated backwards through the network and weights and biases are adjusted in a way that will minimize the cost function. This algorithm is called backpropagation.
+After the sample (or samples) are fed forward through the network, we get either a matrix or vector of output values or a single output value. Next step is to compute the error of the network using one of the aforementioned cost functions, e.g. dice loss in case of image data. The error is than propagated backwards through the network and weights and biases are adjusted in a way that will minimize the cost function. This algorithm is called backpropagation.
 
 \paragraph{Backpropagation}
+In order for network to learn, it should implement some kind of algorithm, that will adjust its learnable parameters (weights and biases) in a way, that the overall error will be lower next time the input samples are fed forward through the network. Backpropagation computes the gradients for each layer starting with the output layer, and by utilizing the chain rule of calculus, it propagates the error back through the network to the first hidden layer.
 
-\subsection{Hyperparameters}
+After the gradients are computed, the parameters are updated accordingly by optimization algorithms such as stochastic gradient descent \cite{Santosh2022-2}. Formulas for updating weights and biases are shown in equation \ref{eq:w-update} and \ref{eq:b-update}, where $\alpha$ is a learning rate (which controls the speed of learning - if changes to the parameters are too great, the minimum can be missed, if changes are too small, the minimum will not be reached in a reasonable time) and $E$ is the cost function.
+
+\begin{align}
+\label{eq:w-update}
+w &= w - \alpha \frac{\partial E}{\partial w} \\
+\label{eq:b-update}
+b &=  b - \alpha \frac{\partial E}{\partial b}
+\end{align}
+
+There is a strict rule for backpropagation to work - all functions used in the network must be differentiable at all points \cite{Rumelhart1986, Santosh2022-2}.
+
+\subsection{Optimization and regularization}
+
+\paragraph{Optimization}
+There are many optimization techniques which are capable of further enhancing the model training and performance. Examples include:
+
+\begin{itemize}
+    \item using small batches of input samples and after each batch passes perform parameter updates,
+    \item utilizing momentum \cite{Polyak1964} to have more control over the learning speed based on the previous gradients \cite{Santosh2022-2},
+    \item using adaptive learning rates, where the learning rate $\alpha$ is usually great at the beginning and as the training progresses it is gradually reduced \cite{Santosh2022-2}. Updates to $\alpha$ can be done after some number of iterations by some preset factor or automatically by utilizing methods such as Adam (adaptive moments) \cite{Kingma2014} or RMSProp \cite{Zou2019}.
+\end{itemize}
+
+\paragraph{Regularization}
+Another set of techniques that can improve model performance is regularization. Usually, a model's performance and prediction capabilities improve during training. Available data are often split into three subsets for training, validation, and testing. The model is, obviously, trained using the training subset. The validation subset is used to check model performance during training, and the test subset is used for the final evaluation of the model. It is important that both validation and test subsets contain samples the model has not yet seen during training - otherwise, the results would be biased. A good model should be robust and generalize well, not only learn patterns that are specific for training data. Sometimes we can observe an effect when, at the beginning of the training, both training and validation performance (such as error value) improve, but later the validation performance plateaus or worsens - this effect is called overfitting \cite{Schaffer1993} and is displayed on figure \ref{fig:overfitting}. 
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=8cm]{assets/images/overfitting.jpg}
+\par\end{centering}
+\caption{Error curve during training - overfitting happens \cite{Santosh2022-2}}
+\label{fig:overfitting}
+\end{figure}
+
+This effect is not desired because it means that the model cannot generalize well on previously unseen samples - it is learning "by heart" from the training data. To overcome this problem, we can implement several regularization mechanisms, that will improve the model's robustness and ability to generalize. Examples include dropout \cite{Srivastava2014}, transfer learning \cite{Pan2009}, early stopping \cite{Sarle1996}, parameter norm penalties such as L1 regularization (lasso regression) and L2 regularization (ridge regression) \cite{Krogh1991}, and more \cite{Santosh2022-2}.
+
+
 
 \section{Evaluation Metrics}
+When evaluating a model's performance, various different metrics exist that can be used. During binary classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
 
-\section{Architectures}
+\begin{itemize}
+    \item True Positives (TP) - a model assigns the true label to a sample that has true label,
+    \item True Negatives (TN) - a model assigns the false label to a sample that has false label,
+    \item False Positives (TP) - a model assigns the true label to a sample that has false label,
+    \item False Negatives (TN) - a model assigns the false label to a sample that has true label,
+\end{itemize}
+
+We will briefly describe some of the evaluation metrics in the following paragraphs. 
+
+\paragraph{Accuracy, Precision, Recall, and F1 Score} Calculation of these basic metrics is displayed in equations \ref{eq:accuracy}, \ref{eq:precision}, \ref{eq:recall}, and \ref{eq:f1}. They ale describe relationships between number of samples belonging to either true positive (TP), true negative (TN), false positive (FP), or false negative (FN) group.
+
+\begin{align}
+\label{eq:accuracy}
+\text{Accuracy} &= \frac{TP + TN}{TP + TN + FP + FN} \\
+\label{eq:precision}
+\text{Precision} &= \frac{TP}{TP + FP} \\
+\label{eq:recall}
+\text{Recall} &= \frac{TP}{TP + FN} \\
+\label{eq:f1}
+\text{F1\ Score} &= 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{align}
+
+\paragraph{Area Under the ROC Curve}
+Receiver Operating Characteristics (ROC) Curve and area under it can be used as another evaluation metric for classification and is superior when compared to overall accuracy \cite{Bradley1997}. The ROC Curve is drawn in the ROC Space as a relationship between the True Positive Rate (TPR, Recall or Sensitivity) and False Positive Rate (FPR) at the different threshold levels \cite{Bradley1997, Nahm2022, Fawcett2006}; the calculation of TPR and FPR is shown in the equations \ref{eq:tpr} and \ref{eq:fpr}.
+
+\begin{align}
+\label{eq:tpr}
+\text{FPR} &= \frac{TP}{TP + FN} = \text{Specificity} = \text{Recall} \\
+\label{eq:fpr}
+\text{FPR} &= 1-\text{Specificity} = \frac{FP}{FP + TN} \\
+\end{align}
+
+The ROC Space and example of ROC Curve is displayed in figure \ref{fig:roc}. Area under this curve (AUC - Area Under the ROC Curve) is then computed and interpreted:
+
+\begin{itemize}
+    \item if $\text{AUC} = 1$, this is the perfect model
+    \item if $\text{AUC} = 0.5$, model capability is equal to random guess
+    \item if $\text{AUC} < 0$, performance of the model is worse than the random guess
+\end{itemize}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=8cm]{assets/images/roc-space.jpg}
+\par\end{centering}
+\caption{ROC Space with ROC Curve \cite{Nahm2022}}
+\label{fig:roc}
+\end{figure}
+
+\paragraph{Intersection over Union} Intersection over Union (IoU), also known as the Jaccard Index, is a widely used evaluation metric in image segmentation and object detection \cite{Rezatofighi2019}. It is computed as the area of overlap between the predicted and ground truth regions divided by the area of their union. The closer the resulting value is to 1 the better the model predictions are \cite{Rezatofighi2019}. Its computation is shown in equation \ref{eq:iou}, where $y$ is the true area and $\hat{y}$ is the area predicted by the model.
+
+\begin{align}
+\label{eq:iou}
+\text{IoU} &= \frac{y \cap \hat{y}}{y \cup \hat{y}}
+\end{align}
