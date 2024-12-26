@@ -294,13 +294,13 @@ This effect is not desired because it means that the model cannot generalize wel
 
 
 \section{Evaluation Metrics}
-When evaluating a model's performance, various different metrics exist that can be used. The evaluation metrics also depend on the task the model was trained for. During binary classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
+When evaluating a model's performance, various different metrics exist that can be used. The evaluation metrics also depend on the task the model was trained for. During classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
 
 \begin{itemize}
-    \item True Positives (TP) - a model assigns the true label to a sample that has true label,
-    \item True Negatives (TN) - a model assigns the false label to a sample that has false label,
-    \item False Positives (TP) - a model assigns the true label to a sample that has false label,
-    \item False Negatives (TN) - a model assigns the false label to a sample that has true label,
+    \item True Positives (TP) - a model assigns a sample to class $c$, when a sample belongs to class $c$,
+    \item True Negatives (TN) - a model does not assign a sample to class $c$, when a sample does not belong to class $c$
+    \item False Positives (TP) - a model does assign a sample to class $c$, when a sample does not belong to class $c$
+    \item False Negatives (TN) - a model does not assign a sample to class $c$, when a sample does belong to class $c$
 \end{itemize}
 
 We will briefly describe some of the evaluation metrics in the following paragraphs. 
@@ -323,9 +323,9 @@ Receiver Operating Characteristics (ROC) Curve and area under it can be used as 
 
 \begin{align}
 \label{eq:tpr}
-\text{FPR} &= \frac{TP}{TP + FN} = \text{Specificity} = \text{Recall} \\
+\text{FPR} &=\text{Specificity} = \text{Recall} = \frac{TP}{TP + FN} \\
 \label{eq:fpr}
-\text{FPR} &= 1-\text{Specificity} = \frac{FP}{FP + TN} \\
+\text{FPR} &= 1-\text{Specificity} = \frac{FP}{FP + TN}
 \end{align}
 
 The ROC Space and example of ROC Curve is displayed in figure \ref{fig:roc}. Area under this curve (AUC - Area Under the ROC Curve) is then computed and interpreted:

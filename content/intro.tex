@@ -20,9 +20,9 @@ Slides stained by these chemicals are then examined by histopathology experts wh
 
 In recent decades breast cancer has been on of the leading causes of death among women and the second most commonly diagnosed type of cancer worldwide \cite{Bray2024, Siegel2023}. According to \cite{Bray2024} in 2022 breast cancer was attributing for approximately 2.3 million newly diagnosed patients - this represents 11.6\% of all diagnosed cancer patients in that year and 666,000 deaths, comprising 6.9\% of all cancer deaths. \cite{Siegel2023} informs that in the USA in the year of 2023 breast cancer among women accounted for more than 297,000 new cases - 31\% of all new female cancer cases and more than 43,000 deaths - 15\% of all female cancer deaths.
 
-When dealing with breast cancer, one needs to keep in mind that there are also different subtypes of breast cancer. Firstly introduced in \cite{Perou2000}, we now know four breast cancer molecular subtypes, based on the positivity or negativity of several receptors. Hormonal Receptor (HR) is positive if either Estrogen or Progesterone receptors are positive, otherwise it is negative and Human Epidermal Growth Factor Receptor 2 (Her2). These four classes along with respective receptor statuses can be seen in table \ref{tab:breast_cancer_subtypes}.
+When dealing with breast cancer, one needs to keep in mind that there are also different subtypes of breast cancer. Firstly introduced in \cite{Perou2000}, we now know four breast cancer molecular subtypes, based on the positivity or negativity of several receptors. These receptors are Human Epidermal Growth Factor Receptor 2 (Her2) and Hormonal Receptor (HR), which is positive if either Estrogen or Progesterone receptors are positive; otherwise it is negative. These four classes along with respective receptor statuses can be seen in table \ref{tab:breast_cancer_subtypes}.
 
-\begin{table}[ht]
+\begin{table}[H]
     \centering
     \caption{Breast Cancer Molecular Subtypes and Receptor Statuses}
     \label{tab:breast_cancer_subtypes}
@@ -48,12 +48,12 @@ However, manual identification and visual recognition of TILs from H\&E stained 
 Deep learning models can be seen as a promising solution and aid for healthcare professionals in this task - by unburdening them and helping them to ease and automate the task of assessing these slides we can achieve more efficient provision of healthcare.
 
 \section{Objectives}
-Usage of a deep learning models introduces a new challenge: in order for them to lay reasonably good results, they need huge amount of high quality data \cite{}. Precise manual annotation of histology slides is not an easy nor a cheap task as we have mentioned earlier. Therefore, our aim in this work is to develop and implement a pipeline for automated detection and segmentation of tumour-infiltrating lymphocytes from breast cancer histology image slides using weak annotations, in the form of bounding boxes, of these cells. The annotations provided are in the form of bounding boxes. Hence, our goals are two-fold:
+Usage of a deep learning models introduces a new challenge: in order for them to lay reasonably good results, they need huge amount of high quality data \cite{}. Precise manual annotation of histology slides is not an easy nor a cheap task as we have mentioned earlier. Therefore, our aim in this work is to develop and implement a pipeline for automated detection and segmentation of tumour-infiltrating lymphocytes from breast cancer histology image slides using weak annotations, in the form of bounding boxes, of these cells. Since annotations provided are in the form of bounding boxes, our goal is two-fold:
 
 \begin{enumerate}
     \item Develop and implement effective and precise algorithm for converting bounding box annotations into pixel mask annotations.
-    \item Implement and compare various deep learning architectures, e.g. U-net and its variants or Vision Transformer and select the best one based on the evaluation metrics such as Intersection over Union (IoU) and F1 score.
+    \item Implement and compare various deep learning architectures, e.g. U-net and its variants or Vision Transformer and select the best one based on the evaluation metrics such as Intersection over Union (IoU) and Dice coefficient.
 \end{enumerate}
 
-In the end we want to have a model that will be able to effectively detect and segment individual cell nuclei from weakly annotated H\&E stained histology images of breast cancer patients.
+In the end, we want to have a model that will be able to effectively detect and segment individual cell nuclei from weakly annotated H\&E stained histology images of breast cancer patients.
 
