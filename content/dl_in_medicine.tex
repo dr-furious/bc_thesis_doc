@@ -21,9 +21,9 @@ Similarly to the Hubel and Wiesel cat's visual cortex, the first layers can lear
 \label{fig:cnn}
 \end{figure}
 
-A convolution layer applies a series of operations on its input and produces an activation map. The most important part is applying a kernel, which is a tensor of fixed width and height, over the input image or activation from the previous convolution layer. This fundamental operation serves as a feature-extracting technique. The kernel slides over its input across its height and width and at each step it performs element-wise multiplication of the pixel values it currently overlaps at each layer of depth and then sums them together to produce a single value. So, for example, if the input is of size $100\times100\times3$ (standard RGB image with 3 channels for red, green, and blue colour), then the kernel is applied to all three channels simultaneously. After the kernel is applied to the whole image, the resulting activation filter will be of size $100\times100\times1$ (assuming that other hyperparameters of convolution are configured in such a manner that original width and height remain unchanged for the activation map - we will cover them later in this chapter), because the kernel will collapse its depth. 
+A convolution layer applies a series of operations on its input and produces an output map. The most important part is applying a kernel, which is a tensor of fixed width and height, over the input image or output map from the previous convolution layer. This fundamental operation serves as a feature-extracting technique. The kernel slides over its input across its height and width and at each step it performs element-wise multiplication of the pixel values it currently overlaps at each layer of depth and then sums them together to produce a single value. So, for example, if the input is of size $100\times100\times3$ (standard RGB image with 3 channels for red, green, and blue colour), then the kernel is applied to all three channels simultaneously. After the kernel is applied to the whole image, the resulting output map will be of size $100\times100\times1$ (assuming that other hyperparameters of convolution are configured in such a manner that original width and height remain unchanged for the output map - we will cover them later in this chapter), because the kernel will collapse its depth. 
 
-The kernel filters can be handcrafted to multiply and intensify certain properties of the image. Examples include the Prewitt, Gabor, Sobel, Laplacian, and Roberts filters for edge and gradient detection. In standard image processing, the weights inside of the kernel are preset. However, in the CNNs these weights are learned during training, so the network determines what features of the image the activation maps will be focused on and hence the network can be more effective \cite{Santosh2022-2, He2023}. In the AlexNet \cite{Krizhevsky2012}, the first deep CNN which outlined the original structure, a ReLU activation function was applied to the value obtained from the convolution operation to break the linearity of the operation. Since then, using an activation function after the convolution operation has become a standard practice \cite{Santosh2022-2, He2023}.
+The kernel filters can be handcrafted to multiply and intensify certain properties of the image. Examples include the Prewitt, Gabor, Sobel, Laplacian, and Roberts filters for edge and gradient detection. In standard image processing, the weights inside of the kernel are preset. However, in the CNNs these weights are learned during training, so the network determines what features of the image the output maps will be focused on and hence the network can be more effective \cite{Santosh2022-2, He2023}. In the AlexNet \cite{Krizhevsky2012}, the first deep CNN which outlined the original structure, a ReLU activation function was applied to the value obtained from the convolution operation to break the linearity of the operation. Since then, using an activation function after the convolution operation has become a standard practice \cite{Santosh2022-2, He2023}, and the name of the output produced by the convolution + ReLU is also called an activation map.
 
 According to the \cite{Santosh2022-2}, convolution operation can be expressed as a function with hyperparameters: $\varphi_{\text{conv}}(C_{\text{in}}, C_{\text{out}}, K, S, P, D)$. The definition of these hyperparameters is:
 
@@ -46,14 +46,14 @@ We can see an example of the convolution in the figure \ref{fig:convolution}.
 \label{fig:convolution}
 \end{figure}
 
-The field of view of a single kernel is small, as typically kernels of size $3\times3$, $5\times5$, or $7\times7$ are used \cite{Santosh2022-2}. In order to address this issue and to be able to build up and capture more complex features in the subsequent layers, the pooling layer is often added. The pooling layer effectively downsamples the feature maps, commonly by a factor of two. This allows the next convolution layers to learn more abstract features that were further apart in the previous feature map. In order to compensate to the information lost during the downsampling, usually a number of independent kernels is increased for the next convolutions after each pooling layer. During pooling, a small array slides over the input map and always selects only a single value from the area it covers, hence decreasing the size of the map. Two pooling methods are common:
+The field of view of a single kernel is small, as typically kernels of size $3\times3$, $5\times5$, or $7\times7$ are used \cite{Santosh2022-2}. In order to address this issue and to be able to build up and capture more complex features in the subsequent layers, the pooling layer is often added. The pooling layer effectively downsamples the feature maps, commonly by a factor of two. This allows the next convolution layers to learn more abstract features that were further apart in the previous feature map. In order to compensate the information lost during the downsampling, usually a number of independent kernels is increased for the next convolutions after each pooling layer. During pooling, a small array slides over the input map and always selects only a single value from the area it covers, hence decreasing the size of the map. Two pooling methods are common:
 
 \begin{enumerate}
     \item Max pooling selects the maximal value from the area it covers, and
     \item Average pooling computes the mean from the values it covers.
 \end{enumerate}
 
-Example of pooling operations, both max and average, can be seen in the figure \ref{fig:pooling}.
+Example of pooling, both max and average, can be seen in the figure \ref{fig:pooling}.
 
 \begin{figure}[H]
 \begin{centering}
@@ -62,7 +62,45 @@ Example of pooling operations, both max and average, can be seen in the figure \
 \caption{Example of max and average pooling operations \cite{Santosh2022-2}}
 \label{fig:pooling}
 \end{figure}
-% importance for image analysis, concept (cat), how they work, how they can be used in medicine, limitations
+
+CNNs are usually organised as repeating layers of convolutions, followed by ReLU activation function and then pooling layer. The output can be then fed into another convolution and a deep CNN can be build using this approach. In CNNs with very large depth a concept of a skip connection, firstly introduced in the \cite{He2016}, can be used. A skip connection allows the input of a layer to bypass the convolutions and then be added to their result, as shown in figure \ref{fig:skip-conn}. Also if we can represent a series of convolution with a function $\varphi(x)$, then the output with skip connection included would be given by $y=\varphi(x) + x$. This residual learning architecture can mitigate the problem of vanishing or exploding gradient in very deep CNNs \cite{Santosh2022-2}.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=8cm]{assets/images/skip-conn.png}
+\par\end{centering}
+\caption{A building block of residual network \cite{He2016}}
+\label{fig:skip-conn}
+\end{figure}
+
+Other strategies that can improve the performance of CNNs include batch-normalization layers \cite{Ioffe2015}(which are inserted after the convolution layers) and the utilization of parallel branches \cite{Szegedy2015} (which use different kernel sizes to compute multi-scale feature maps by concatenating their output maps).
+
+After the series of convolutions and downsampling, the final compressed feature representation of the image needs to be flattened (converted into a vector) so it can serve as an input for the fully-connected layer(s), which will then make the appropriate decision based on the task the model should do. Two methods exist \cite{Santosh2022-2}, how we can convert the image descriptor into a vector:
+
+\begin{enumerate}
+    \item Reshape the activation maps to form a one-dimensional tensor \cite{Krizhevsky2012, LeCun2015-2}.
+    \item Use average pooling on the entire activation map which will collapse the entire information into a single value and then concatenate these values to form a vector. For $N$ activation maps we will get a vector with $N$ elements \cite{He2016, Szegedy2015}.
+\end{enumerate}
+
+We can see their visual representation in figure \ref{fig:flatenning} and an example of a CNN with all layers in figure \ref{fig:full-cnn}.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=12cm]{assets/images/flattening.jpg}
+\par\end{centering}
+\caption{Different flattening strategies \cite{Santosh2022-2}}
+\label{fig:flatenning}
+\end{figure}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=10cm]{assets/images/cnn-full.jpg}
+\par\end{centering}
+\caption{Example of CNN architecture \cite{Santosh2022-2}}
+\label{fig:full-cnn}
+\end{figure}
+
+% how they can be used in medicine, limitations
 
 \subsection{U-Net}
 % architecture, advantages, limitations
