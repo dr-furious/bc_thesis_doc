@@ -73,7 +73,7 @@ CNNs are usually organised as repeating layers of convolutions, followed by the 
 \label{fig:cnn-layers}
 \end{figure}
 
-In CNNs with very large depth, a concept of a skip connection, firstly introduced in the \cite{He2016}, can be used. A skip connection allows the input of a layer to bypass the convolutions and then be added to their result, as shown in figure \ref{fig:skip-conn}. Also, if we can represent a series of convolution with a function $\varphi(x)$, then the output with skip connection included would be given by $y=\varphi(x) + x$. This residual learning architecture can mitigate the problem of vanishing or exploding gradient in very deep CNNs \cite{Santosh2022-2}.
+In CNNs with very large depth, a concept of a skip connection, firstly introduced in the \cite{He2016}, can be used. A skip connection allows the input of a layer to bypass the convolutions and then be added to their result, as shown in figure \ref{fig:skip-conn}. Also, if we can represent a series of convolution with a function $\varphi(x)$, then the output with skip connection included would be given by $y=\varphi(x) + x$. This residual learning architecture can mitigate the problem of vanishing gradient in very deep CNNs \cite{Santosh2022-2}.
 
 \begin{figure}[H]
 \begin{centering}
@@ -119,17 +119,77 @@ There are many CNN architectures that introduced new concepts in the field of co
     \item AlexNet \cite{Krizhevsky2012}: built on top of the LeNet, utilized a deeper architecture along with ReLU activation functions and had immense success at the ImageNet Large-Scale Visual Recognition Competition. This success brought huge attention to the  CNNs and their potential in image analysis related tasks.
     \item VGGNet \cite{Simonyan2014}: introduced a strategy of expandable convolutional blocks, where in each block a varying number of convolutions can be used. Each block is then followed by the max pooling layer. This allowed for tailoring the network to reflect the complexity of the problem it was assigned to solve.
     \item GoogleLeNet \cite{Szegedy2015}: used kernels of varying sizes to extract features from the input maps and then concatenated their output maps to create a depth-wise combined feature. It also used the full-scale average pooling in the final feature extracting layer to create a one dimensional tensor. Furthermore it utilized auxiliary classifiers in the intermediate layers to boost the gradient flow. In the later version, called Inception Net, it introduced more concepts, like kernel factorization and batch normalization \cite{Szegedy2016-2}.
-    \item ResNet \cite{He2016}: introduced a strategy of skip connections to solve the problem of vanishing and exploding gradient in very deep CNNs. 
+    \item ResNet \cite{He2016}: introduced a strategy of skip connections to solve the problem of vanishing gradient in very deep CNNs. 
 \end{enumerate}
 
 In the detection task, two main architectures were created, namely the Region-based CNN \cite{Girshick2014} (further upgraded to the Faster R-CNN and Mask R-CNN \cite{Ren2017}) and the You Only Look Once (YOLO) \cite{He2017}. 
 
-Both R-CNN and YOLO are able to localize the object in an image with a bounding box label. However, sometimes we want a more precise label, and this is where segmentation comes into play.
+Both R-CNN and YOLO are able to localize the object in an image with a bounding box label. However, sometimes we want to obtain a more precise location of the object, and this is where segmentation comes into play.
 
-\subsection{U-Net and its Variants}
+\subsection{U-Net and Its Variants}
+In order to perfectly localize an object in an image, we would like to construct a pixel-level mask that would mark the pixels where the object is present. We can use classification for this - each pixel can either be classified as the one which does or does not display a part of the object. Segmentation algorithms have a deep impact and huge potential for medical imaging and digital pathology, where they can be used to mark different tissue types, organs, cells, and tumour regions \cite{Santosh2022-3}.
 
+The limitation of fully CNN architectures is the inability to preserve the spatial information after the initial feature-extracting layers \cite{Santosh2022-3}. This issue is addressed in a new type of architecture, the encoder-decoder architecture. This architectural type, also known as the autoencoders or autoassociative networks, was firstly introduced in the \cite{Kramer1992}. Its visual representation is shown in figure \ref{fig:autoencoder}.
 
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=12cm]{assets/images/encoder-decoder.jpg}
+\par\end{centering}
+\caption{Example of the autoencoder architecture \cite{Santosh2022-2}}
+\label{fig:autoencoder}
+\end{figure}
 
+It consists of two main parts:
+
+\begin{enumerate}
+    \item The encoder part, which is responsible for encoding the input image and extracting the most descriptive features, compressing them and reducing the redundancy, and
+    \item The decoder part, which is responsible for reconstructing the original input image from the compressed image descriptor.
+\end{enumerate}
+
+The loss function computes the difference between the original input image and the image constructed by the decoder. If the decoder is able to create an image that looks very similar to the original, it means that the hidden representation of the image extracted by the encoder is credible enough. Then the decoder part can be removed and instead a classification, segmentation, or localization module can be attached and exploit the features learned by the encoder \cite{Santosh2022-2}.
+
+In segmentation tasks, a simple change is added to the decoder part. Instead of generating the original image, it is trained to create the segmentation mask, where each pixel has a probability of belonging to a certain class. This computed probability distribution mask is used along with the original mask in the loss function to compute their difference and guide the training.
+
+When the activation maps are downscaled in the encoder using operation such as max pooling, where only a single value is picked, we need a correct mechanism to reconstruct the original spatial position of that value during the upscaling of the maps. This can be achieved by remembering and forwarding the indices of the chosen value, as it was first introduced in the SegNet architecture \cite{Badrinarayanan2017}.
+
+One of the most widely adopted and impacting architectures is the U-Net model \cite{Ronneberger2015}. U-Net was designed as the model for medical image segmentation tasks and achieved great success in doing so \cite{Santosh2022-3, Siddique2021}. Its architecture can be seen in figure \ref{fig:unet}.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=12cm]{assets/images/unet.png}
+\par\end{centering}
+\caption{U-Net architecture \cite{Siddique2021}}
+\label{fig:unet}
+\end{figure}
+
+Similarly to autoencoders, it has two main parts, the encoder and decoder. The encoder works as a classical CNN feature extractor, with convolutions, ReLU activation functions and max pooling. In each layer there are two convolutions (kernel size is $3\times3$), followed by the ReLU and the resulting activation maps are downsampled by the factor of two using the max pooling layer (with $2\times2$ matrix). Before the downsampling happens, the copy of activation maps is sent to the decoder (skip connections). Every next block doubles the number of channels. This is repeated four times, until we reach the bottleneck, where we again perform the convolutions with ReLU, but omit the downscaling. At this point, the features of the input image are in their most compressed form. Output from the bottleneck is then send to the decoder part. Next the decoder part uses up-convolutions (kernel size is $2\times2$), to expand the feature maps (double their size) and halve the number of channels. Particularly these up-convolutions are distinctive when comparing U-Net to other architectures \cite{Siddique2021}. The activation map is upscaled by up-convolution, then the activation maps, previously sent from the encoder, are concatenated with it. The concatenation is a required step, since the the border pixels are lost in every convolution (the convolutions do not use padding), and also to reintroduce some information that might be lost during the downsampling. Then again two $3\times3$ convolutions with ReLU are applied. This is also repeated four times, to reflect the encoder blocks. This approach can be visually drawn into a u-shape like architecture, from which the U-Net derived its name. Finally after the last decoder block, the $1\times1$ convolution is used to get the desired number of channels.
+
+Since the original U-Net, many different variants of it were introduced \cite{Siddique2021}. To list a few examples:
+
+\begin{itemize}
+    \item 3D U-Net \cite{Çiçek2016}: works as a classical U-Net but was modified in a way that it can segment 3-dimensional data. Every 2D operation (2D convolution, 2D pooling, 2D up-convolution) were replaced by their corresponding  3D equivalents. It can be useful in medical images that utilize 3D space like MRI and CT.
+    \item Attention U-Net \cite{Oktay2018}: utilizes the attention gate to draw attention of the network on the important parts of the image. These attention gates are inserted on a place where the concatenation of encoder feature maps and decoder feature maps should occur, as can be seen in figure \ref{fig:att-unet}. Before this concatenation happens, both sets of feature maps are run trough the attention gate where a series of operation is performed. These operations are visualized in figure \ref{fig:att-gate}. Firstly both sets are run trough a $1\times1\times1$ convolution to align their dimensions and then are added together. Then they pass through the ReLU activation function, $1\times1\times1$ convolution layer to reduce their depth to 1, sigmoid activation function to squeeze the values between 0 and 1 and an optional resampler to correctly align the spatial dimensions. This results in a attention map containing values between 0 and 1 and with the depth of 1. This attention map is then broadcasted and multiplied by the feature maps from the encoder - this produces the final output of the attention gate, which is then concatenated with the feature maps upsampled by the decoder.
+
+    \begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=12cm]{assets/images/att-unet.png}
+    \par\end{centering}
+    \caption{U-Net architecture with added attention gates \cite{Oktay2018}}
+    \label{fig:att-unet}
+    \end{figure}
+
+    \begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=12cm]{assets/images/att-gate.png}
+    \par\end{centering}
+    \caption{Additive attention gates \cite{Oktay2018}}
+    \label{fig:att-gate}
+    \end{figure}
+
+    \item Residual U-Net is inspired by the \cite{He2016} and uses the skip connections within each block to help the gradient flow and address the problem of vanishing gradient.
+\end{itemize}
+
+Many more U-Net variants exists that we do not explain further in this work, for example the Inception U-Net, Recurrent U-Net, Dense U-Net, Adversarial U-Net, Ensemble U-Net, and $\text{U-Net}^{++}$, each showing potential in various medical imaging domains, from CT and MRI scans to radiology and histology \cite{Siddique2021}.
 % architecture, advantages, limitations, how they can be used in medicine, limitations
 
 \subsection{Vision Transformer}
