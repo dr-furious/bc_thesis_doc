@@ -15,7 +15,7 @@ Similarly to the Hubel and Wiesel cat's visual cortex, the first layers can lear
 
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[width=8cm]{assets/images/cnn.jpg}
+\includegraphics[width=10cm]{assets/images/cnn.jpg}
 \par\end{centering}
 \caption{Example of CNN learning strategy \cite{Santosh2022-2}}
 \label{fig:cnn}
@@ -63,7 +63,17 @@ Example of pooling, both max and average, can be seen in the figure \ref{fig:poo
 \label{fig:pooling}
 \end{figure}
 
-CNNs are usually organised as repeating layers of convolutions, followed by ReLU activation function and then pooling layer. The output can be then fed into another convolution and a deep CNN can be build using this approach. In CNNs with very large depth a concept of a skip connection, firstly introduced in the \cite{He2016}, can be used. A skip connection allows the input of a layer to bypass the convolutions and then be added to their result, as shown in figure \ref{fig:skip-conn}. Also if we can represent a series of convolution with a function $\varphi(x)$, then the output with skip connection included would be given by $y=\varphi(x) + x$. This residual learning architecture can mitigate the problem of vanishing or exploding gradient in very deep CNNs \cite{Santosh2022-2}.
+CNNs are usually organised as repeating layers of convolutions, followed by the ReLU activation function and then the pooling layer. The output can be then fed into another convolution and a deep CNN can be build using this approach. There is a rule of thumb \cite{Santosh2022-3}, where we start with a small number of independent filters with a small field of view and then we downsample the image by the factor of two (to increase the field of view) and double the subsequent number of independent filters as can be seen in figure \ref{fig:cnn-layers}.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=12cm]{assets/images/cnn-layers.jpg}
+\par\end{centering}
+\caption{Scale space pyramid of a CNN \cite{Santosh2022-3}}
+\label{fig:cnn-layers}
+\end{figure}
+
+In CNNs with very large depth, a concept of a skip connection, firstly introduced in the \cite{He2016}, can be used. A skip connection allows the input of a layer to bypass the convolutions and then be added to their result, as shown in figure \ref{fig:skip-conn}. Also, if we can represent a series of convolution with a function $\varphi(x)$, then the output with skip connection included would be given by $y=\varphi(x) + x$. This residual learning architecture can mitigate the problem of vanishing or exploding gradient in very deep CNNs \cite{Santosh2022-2}.
 
 \begin{figure}[H]
 \begin{centering}
@@ -82,7 +92,7 @@ After the series of convolutions and downsampling, the final compressed feature 
     \item Use average pooling on the entire activation map which will collapse the entire information into a single value and then concatenate these values to form a vector. For $N$ activation maps we will get a vector with $N$ elements \cite{He2016, Szegedy2015}.
 \end{enumerate}
 
-We can see their visual representation in figure \ref{fig:flatenning} and an example of a CNN with all layers in figure \ref{fig:full-cnn}.
+We can see their visual representation in figure \ref{fig:flatenning}.
 
 \begin{figure}[H]
 \begin{centering}
@@ -92,6 +102,8 @@ We can see their visual representation in figure \ref{fig:flatenning} and an exa
 \label{fig:flatenning}
 \end{figure}
 
+An example of a CNN with all layers is in figure \ref{fig:full-cnn}. The input image features are extracted by convolution layer with four independent $5\times5$ kernel filters, followed by ReLU activation function and max pooling layer. Then the extracted image descriptor is flattened into a vector and fed into fully connected layers which serve as the classification output head.
+
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[width=10cm]{assets/images/cnn-full.jpg}
@@ -100,10 +112,25 @@ We can see their visual representation in figure \ref{fig:flatenning} and an exa
 \label{fig:full-cnn}
 \end{figure}
 
-% how they can be used in medicine, limitations
+There are many CNN architectures that introduced new concepts in the field of computer vision and image analysis when they were presented. Considering today's knowledge and advancements, some of them might look trivial, but their contribution should not be overlooked. In the classification task, we can mention:
 
-\subsection{U-Net}
-% architecture, advantages, limitations
+\begin{enumerate}
+    \item LeNet5 \cite{LeCun2015-2}: uses series of convolution and pooling operations to extract the image features and fully connected layers to classify the input. It was introduced as a model that should recognize handwritten digits.
+    \item AlexNet \cite{Krizhevsky2012}: built on top of the LeNet, utilized a deeper architecture along with ReLU activation functions and had immense success at the ImageNet Large-Scale Visual Recognition Competition. This success brought huge attention to the  CNNs and their potential in image analysis related tasks.
+    \item VGGNet \cite{Simonyan2014}: introduced a strategy of expandable convolutional blocks, where in each block a varying number of convolutions can be used. Each block is then followed by the max pooling layer. This allowed for tailoring the network to reflect the complexity of the problem it was assigned to solve.
+    \item GoogleLeNet \cite{Szegedy2015}: used kernels of varying sizes to extract features from the input maps and then concatenated their output maps to create a depth-wise combined feature. It also used the full-scale average pooling in the final feature extracting layer to create a one dimensional tensor. Furthermore it utilized auxiliary classifiers in the intermediate layers to boost the gradient flow. In the later version, called Inception Net, it introduced more concepts, like kernel factorization and batch normalization \cite{Szegedy2016-2}.
+    \item ResNet \cite{He2016}: introduced a strategy of skip connections to solve the problem of vanishing and exploding gradient in very deep CNNs. 
+\end{enumerate}
+
+In the detection task, two main architectures were created, namely the Region-based CNN \cite{Girshick2014} (further upgraded to the Faster R-CNN and Mask R-CNN \cite{Ren2017}) and the You Only Look Once (YOLO) \cite{He2017}. 
+
+Both R-CNN and YOLO are able to localize the object in an image with a bounding box label. However, sometimes we want a more precise label, and this is where segmentation comes into play.
+
+\subsection{U-Net and its Variants}
+
+
+
+% architecture, advantages, limitations, how they can be used in medicine, limitations
 
 \subsection{Vision Transformer}
 % architecture, advantages, limitations
