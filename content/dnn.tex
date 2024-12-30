@@ -547,21 +547,37 @@ Since the original U-Net, many different variants of it were introduced \cite{Si
 Many more U-Net variants exists that we do not explain further in this work, for example the Inception U-Net, Recurrent U-Net, Dense U-Net, Adversarial U-Net, Ensemble U-Net, and $\text{U-Net}^{++}$, each showing potential in various medical imaging domains, from CT and MRI scans to radiology, cytology, and histology \cite{Siddique2021}.
 
 \subsection{Vision Transformers}
+CNNs were for a long time considered dominating architectural pattern in deep learning tasks related to visual data, similarly to the RNNs being dominant in sequential data processing such as natural language processing (NLP) \cite{Vaswani2017}. When the Transformer architecture was proposed in \cite{Vaswani2017}, things began to change. Nowadays, transformer-based architecture is prevalent in the NLP field \cite{Shamshad2023} and with the introduction of Vision Transformer in \cite{Dosovitskiy2020} it seems, that transformers can be applied in computer vision as well and potentially compete with CNNs \cite{Hu2023}.
+
+Vision Transformers (ViTs) build on the success of Transformers in NLP tasks \cite{Dosovitskiy2020, Shamshad2023}. Transformers utilize the attention mechanism that is able to capture a global context of the input data and is not limited by the distance of the pixels as it was the case of CNNs \cite{Shamshad2023}. ViTs took advantage of the standard transformer encoder part which can be seen in figure \ref{fig:vit}. The encoder connects together multiple attention blocks to make use of the global image context.
+
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/vit.jpg}
+    \par\end{centering}
+    \caption{Vision transformer architecture for classification \cite{Shamshad2023}}
+    \label{fig:vit}
+\end{figure}
+
+Bellow we briefly mention the ViT algorithm as was described in \cite{Shamshad2023}:
+
+\begin{enumerate}
+    \item The input image is split into patches with fixed sizes, for example authors in \cite{Dosovitskiy2020} used patch size of $16\times16$ pixels
+    \item Image patches are converted by flattening into the vector space
+    \item To reduce the dimensions of the resulting embeddings, vectorized patches are run through a trainable linear layer
+    \item Since transformers are not aware of the spatial information, positional information is added to each vectorized embedding
+    \item This sequence is then fed into the encoder
+    \item Since ViTs require huge amount of data to perform well, it is a great idea to pre-train the ViT on large dataset and then fine-tune it to the specific task.
+    \item In classification tasks, an extra embedding is added which will be learned during training - the class embedding.
+\end{enumerate}
+
+The self-attention mechanism and multi-head self-attention are the key components of ViTs success. The self-attention mechanism allows model to figure out the importance of a patch embedding with respect to all the other patch embeddings of the image, and the multi-head self-attention is composed of multiple self-attention units (also called heads) where each head is independent of the other heads. In the end they their outputs are stacked onto one another and this allows the model to capture complex relationships and dependencies across the input embeddings \cite{Shamshad2023}.
+
+Vision Transformers have achieved great success along with CNNs in many applications of the medical imaging domain in tasks such as medical image classification, segmentation, restoration, synthesis, medical object detection, and more \cite{Shamshad2023}.
+
 
 % architecture, advantages, limitations
 
-\section{Challenges, Strategies and Future}
-
-\subsection{Data Annotation}
-As we mentioned several times throughout this work, the quality and quantity of data play a crucial role when developing and training a deep learning models. In the domain of medicine, these measures are critical, since the 
-% how data is annotated, problems limitations etc
-
-\subsection{Weakly Supervised Learning}
-% what it is, how it works, challenges
-
-\subsection{Active Learning}
+\section{Active Learning}
 % what it is, how ut works, why it is important, explainability
-
-\subsection{Future Trends}
-% what to expect next
 
