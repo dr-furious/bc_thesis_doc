@@ -571,13 +571,20 @@ Bellow we briefly mention the ViT algorithm as was described in \cite{Shamshad20
     \item In classification tasks, an extra embedding is added which will be learned during training - the class embedding.
 \end{enumerate}
 
-The self-attention mechanism and multi-head self-attention are the key components of ViTs success. The self-attention mechanism allows model to figure out the importance of a patch embedding with respect to all the other patch embeddings of the image, and the multi-head self-attention is composed of multiple self-attention units (also called heads) where each head is independent of the other heads. In the end they their outputs are stacked onto one another and this allows the model to capture complex relationships and dependencies across the input embeddings \cite{Shamshad2023}.
+The self-attention mechanism and multi-head self-attention are the key components of ViTs success. The self-attention mechanism allows model to figure out the importance of a patch embedding with respect to all the other patch embeddings of the image. The multi-head self-attention is composed of multiple self-attention units (also called heads) where each head is independent of the other heads. In the end their outputs are stacked onto one another and passed through another linear layer. The produced output can serve as input to another attention block, hence a deep network can be constructed. This allows the model to capture complex relationships and dependencies across the input embeddings \cite{Shamshad2023}.
 
 Vision Transformers have achieved great success along with CNNs in many applications of the medical imaging domain in tasks such as medical image classification, segmentation, restoration, synthesis, medical object detection, and more \cite{Shamshad2023}.
 
-
-% architecture, advantages, limitations
-
 \section{Active Learning}
-% what it is, how ut works, why it is important, explainability
+Deep learning models performing supervised learning, although achieving great performance, require substantial amount of labelled data. In the medical imaging domain it is even harder to collect a dataset with high quality annotations \cite{Nath2021}. 
+
+The concept of active learning can serve as a potential solution to this problem \cite{Nath2021, Wang2023}. Pool-based active learning is a standard active learning strategy \cite{Wang2023}. In this methodology a model is trained with a smaller set of annotated data and then we let it predict the labels of samples in the unlabelled dataset (we call this also a pool of unlabelled data). Then those samples are selected, which have the greatest informative value and potential to improve the model in the next iteration of training. Different selection strategies exists, for example we can select those samples which model was least certain about (uncertainty sampling), or we let a set of models do the labelling and select those samples, in which there was greatest disagreement among the models (query-by-committee) \cite{Wang2023}. These sample are then sent to the oracle (e.g. medical professional) for labelling and are added back into the annotated dataset and after enough samples is annotated by the oracle, the model is retrained \cite{Wang2023}. Visual example of this process can be seen in figure \ref{fig:active-learning}.
+
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/active-learning.png}
+    \par\end{centering}
+    \caption{Active learning in medicine \cite{Wang2023}}
+    \label{fig:active-learning}
+\end{figure}
 
