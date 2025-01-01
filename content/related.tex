@@ -1,1 +1,31 @@
 \chapter{Related Work}
+Precise manual cell annotation on the huge WSI slides is a laborious task that needs to be performed by skilled expert pathologists. There exist large number of models trained on the pixel-level masks for cell segmentation, which perform remarkably well. In the field of weak supervision for cell segmentation, a number of studies focus either on weak supervision in a form of point annotations in H\&E slides, or weak supervision with bounding box annotations of cells in microscopic imaging or DNA cytometry. However, we did not find many studies focusing on weakly annotated cell segmentation, especially from the histopathological H\&E stained slides, when annotations were presented in the form of bounding boxes. Therefore, to comprehensively review the current state of research, we will first examine studies that utilize bounding box cell annotations in histology. Subsequently, we will explore selected papers focusing on cell annotations using bounding boxes in modalities other than histology, as well as those addressing weakly supervised cell segmentation in histology employing point annotations of cell nuclei.
+
+% short intro, what they do and propose, findings, modalities
+% dataset and labels
+% methodology (architecture + image)
+% results and metrics (tables)
+
+\section{Guided Prompting in SAM for Weakly Supervised Cell Segmentation in Histopathological Images \cite{Tyagi2023}}
+The authors of this work explore the applicability of the Segment Anything Model (SAM), using guided prompting, to the cell segmentation task from histology image slides, where the cells are only annotated using bounding box labels. Their results outperformed other models for weakly supervised segmentation by huge margins.
+
+Three different datasets were used, and since each dataset was annotated with pixel-level masks, these were converted into the bounding boxes for the purpose of this study and the segmentation mask labels were not used during the training. If the dataset also contained class labels for individual cell nuclei, these labels were not used as this study is not concerned with the cell classification. The datasets used were: 
+
+\begin{enumerate}
+    \item ConSep dataset, containing 41 H\&E stained WSIs, each having $1000\times1000$ pixels. The images are of single cancer and colorectal adenocarcinoma. Together there are 24,319 annotated cells, split into three different categories (inflammatory, epithelial, spindle). For the purpose of this work, each image was split into four patches, each patch having $500\times500$ pixels. Then 98 of these patches were used for training, 10 for validation and 56 for testing.
+    \item MoNuSeg is a multi-organ cell segmentation dataset containing 51 H\&E stained images of different organ tissue (stomach, bladder, breast, liver, kidney, prostate, colon). Together the images have 28,846 annotated cell nuclei. Similarly to the ConSep, each $1000\times1000$ image is split into four $500\times500$ patches, 133 of them used for training, 15 for validation and 56 for testing.
+    \item TNBC dataset of 50 $512\times512$ WSIs of triple negative breast cancer tissue. In total it contains 4,022 annotated cell nuclei. 34 images were used for training, 5 for validation and 11 for testing.
+\end{enumerate}
+
+\section{DDTNet: A dense dual-task network for tumor-infiltrating lymphocyte detection and segmentation in histopathological images of breast cancer \cite{Zhang2022}}
+text
+
+\section{A pathomic approach for tumor-infiltrating lymphocytes classification on breast cancer digital pathology images \cite{Verdicchio2023}}
+text
+
+
+\section{Weakly Supervised Cell-Instance Segmentation with Two Types of Weak Labels by Single Instance Pasting \cite{Nishimura2023}}
+text
+
+\section{Weakly Supervised Deep Nuclei Segmentation With Sparsely Annotated Bounding Boxes for DNA Image Cytometry \cite{Liang2023}}
+text
