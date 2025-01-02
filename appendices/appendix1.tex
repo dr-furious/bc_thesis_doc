@@ -1,14 +1,50 @@
 \setcounter{figure}{0}
 \setcounter{listing}{0}
 
-\chapter{First Appendix \label{cha:chapter1} }
+\chapter{Plan of Work \label{cha:chapter1} }
 
-\begin{refsegment}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|p{12.5cm}|}
+\hline
+\textbf{Week} & \textbf{Planned Work} \\ 
+\hline
+\hline
+1-2 & Literature review on digital pathology and TIL detection. \\ 
+\hline
+3-6 & Study of deep learning techniques and architectures (CNNs, U-Net, Vision Transformers) and different pseudo-label generation techniques (GrabCut, water-shed, Otsu, QuPath). \\
+\hline
+7 & Familiarization with the TIGER dataset. \\
+\hline
+8-10 & Initial development of the pipeline to convert bounding box annotations to pixel masks. Preparing the mid-term report. \\ 
+\hline
+11-13 & Preparing mid-term report, finishing analysis, summarizing progress and findings. \\ 
+\hline
+\end{tabular}
+\caption{Plan of Work for Winter Semester}
+\label{tab:winter_plan}
+\end{table}
 
-% Appendix
-% \input{appendices/chapter1}
-
-% Bibliography
-\printbibliography[heading=referencessec,segment=\therefsegment,resetnumbers=true]
-
-\end{refsegment}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|p{12.5cm}|}
+\hline
+\textbf{Week} & \textbf{Planned Work} \\ 
+\hline
+\hline
+1-2 & Testing and refining the pseudo-label generation algorithm. \\
+\hline
+3 & Selection of deep learning architectures for implementation. \\ 
+\hline
+4-8 & Implementing, training and evaluation of the selected segmentation architectures (e.g., U-Net based architectures, Vision Transformers). Analysis of models using evaluation metrics (IoU, Dice coefficient). \\ 
+\hline
+9 & Fine-tuning the best-performing model. \\ 
+\hline
+10-12 & Writing and presenting final report with results and conclusions. \\ 
+\hline
+13 & Submission of final thesis. \\ 
+\hline
+\end{tabular}
+\caption{Plan of Work for Summer Semester}
+\label{tab:summer_plan}
+\end{table}

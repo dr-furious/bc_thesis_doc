@@ -3,7 +3,7 @@
 The history of artificial neural networks (ANN) dates back to 1943. In \cite{McCulloch1943} authors tried to mathematically describe the activity of biological neurons in the human brain. Using these principles they built a first artificial neuron and artificial neural network. In 1974 a PhD student, Paul Werbos, introduced in \cite{Werbos1974} the idea of backpropagation of errors by which ANN are able to learn other than linearly separable problems, and this idea was further expanded in \cite{Rumelhart1986}. Artificial neural networks that contain many hidden layers are also called deep neural networks (DNN) and the process of training this network is called deep learning \cite{LeCun2015}. Over the years deep learning and one of its variants - convolutional neural network that was proposed in \cite{LeCun2015-2} - were found to be very effective and precise in domains that were found unreachable by the classical AI and ML algorithms \cite{LeCun2015}. This was caused by their ability to capture abstract and complex patterns that simpler models found impossible to catch. Such examples include analysis of image data \cite{Farabet2013, Alzubaidi2021} and recent advancements in natural language processing (NLP) \cite{Deng2018}.
 
 \section{Structure}
-The fundamental part of every artificial neural network is the neuron. Neuron is basically a function which has one or more inputs and one output. Inside this neuron, a mathematical computation is being done in order to transform input into output. Input can also be referred to as input vector or vector of input features. Each input feature has its weight by which it is multiplied. Next, a bias is added to the multiplied and summed features and weights. This calculation is still linear so in order for it to be able to capture more complex patterns, we need to apply a non-linear activation function to its output. The mathematical representation of artificial neuron can be seen in the equations \ref{eq:linear} and \ref{eq:activation}.
+The fundamental part of every artificial neural network is the neuron. Neuron is basically a function which has one or more inputs and one output. Inside this neuron, a mathematical computation is being done in order to transform input into output. Input can also be referred to as input vector or vector of input features. Each input feature has its weight by which it is multiplied. Next, a bias is added to the multiplied and summed features and weights. This calculation is still linear so in order for it to be able to capture more complex patterns, we need to apply a non-linear activation function to its output. The mathematical representation of artificial neuron can be seen in the equations \ref{eq:linear} and \ref{eq:activation} \cite{Goodfellow2016}.
 
 \begin{align}
 \label{eq:linear}
@@ -152,18 +152,19 @@ Neural network can be divided into three main parts:
     \item Output layer
 \end{itemize}
 
-Input layer is the initial layer and the only layer that does not contain neurons which perform calculations but rather consists of \textit{N} input features $x_1, x_2, \dots, x_N$ also referred to as a vector $\vec{x}$ of input features:
+Input layer is the initial layer and the only layer that does not contain neurons which perform calculations but rather consists of \textit{N} input features $x_1, x_2, \dots, x_N$ also referred to as a vector $\vec{x}$ of input features displayed in equation \ref{eq:vector-input}.
 
-\[
+\begin{equation}
+\label{eq:vector-input}
 \vec{x} = \begin{bmatrix}
 x_1 \\
 x_2 \\
 \vdots \\
 x_N
 \end{bmatrix}
-\]
+\end{equation}
 
-The subsequent layers between the input layer and output layer are called hidden layers. The name comes from the fact that their outputs are not directly observable, nor are they provided by the external environment - they are internal to the network's architecture. Neurons inside these layers perform calculations on the input and produce output, which is then fed forward to the next layer.
+The subsequent layers between the input layer and output layer are called hidden layers. The name comes from the fact that their outputs are not directly observable, nor are they provided by the external environment - they are internal to the network's architecture. Neurons inside these layers perform calculations on the input and produce output, which is then fed forward to the next layer \cite{LeCun2015}.
 
 The final output layer produces an output of the network. Output and number of neurons depend on the task the network is being trained for. For regression tasks, one neuron is often suitable - it predicts a continuous variable \cite{Goodfellow2016}. During classification tasks, it can further depend on the nature of the classification. In binary classification, again a single neuron can suffice. It will display a probability of the input belonging to one of the classes - if the probability is high, it will assign that class to it, and if the probability is low, it will assign the other class to it \cite{Goodfellow2016}. In multi-class classification, the number of neurons is the same as the number of classes and each neuron predicts a probability of the input belonging to one specific class \cite{Goodfellow2016}.
 
@@ -204,7 +205,7 @@ E_\text{DiceLoss} &= \frac{1}{m}\sum_{i=1}^m (1-D_i)
 \end{align}
 
 \section{Training}
-During the training phase, a neural network tries to minimize the cost function by adjusting its parameters - weights and biases. This process is often called learning, and we can say that the neural network learns to map input features onto the desired output. Prior to the training process we need to ensure that the data is in desired quality and quantity, otherwise the training will not be effective and the performance of the resulting model will be poor. Methods such as data preprocessing are typically used. 
+During the training phase, a neural network tries to minimize the cost function by adjusting its parameters - weights and biases. This process is often called learning, and we can say that the neural network learns to map input features onto the desired output. Prior to the training process we need to ensure that the data is in desired quality and quantity, otherwise the training will not be effective and the performance of the resulting model will be poor. Methods such as data preprocessing are typically used \cite{Goodfellow2016, LeCun2015}. 
 
 Training itself consist of multiple steps:
 
@@ -248,15 +249,15 @@ A_L &= \varphi(Z)
 
 
 
-The final output layer will then return the predicted output value for each sample. At the beginning of the training, the output values will be almost random, but as the training continues, the predicted values should converge towards the ground truth values - this is the desired behaviour.
+The final output layer will then return the predicted output value for each sample. At the beginning of the training, the output values will be almost random, but as the training continues, the predicted values should converge towards the ground truth values - this is the desired behaviour \cite{Goodfellow2016, LeCun2015}.
 
 \paragraph{Cost function computation}
 After the sample (or samples) are fed forward through the network, we get either a matrix or vector of output values or a single output value. Next step is to compute the error of the network using one of the aforementioned cost functions, e.g. dice loss in case of image data. The error is than propagated backwards through the network and weights and biases are adjusted in a way that will minimize the cost function. This algorithm is called backpropagation.
 
 \paragraph{Backpropagation}
-In order for network to learn, it should implement some kind of algorithm, that will adjust its learnable parameters (weights and biases) in a way, that the overall error will be lower next time the input samples are fed forward through the network. Backpropagation computes the gradients for each layer starting with the output layer, and by utilizing the chain rule of calculus, it propagates the error back through the network to the first hidden layer.
+In order for network to learn, it should implement some kind of algorithm, that will adjust its learnable parameters (weights and biases) in a way, that the overall error will be lower next time the input samples are fed forward through the network. Backpropagation computes the gradients for each layer starting with the output layer, and by utilizing the chain rule of calculus, it propagates the error back through the network to the first hidden layer \cite{LeCun2015}.
 
-After the gradients are computed, the parameters are updated accordingly by optimization algorithms such as stochastic gradient descent \cite{Santosh2022-2}. Formulas for updating weights and biases are shown in equation \ref{eq:w-update} and \ref{eq:b-update}, where $\alpha$ is a learning rate (which controls the speed of learning - if changes to the parameters are too great, the minimum can be missed, if changes are too small, the minimum will not be reached in a reasonable time) and $E$ is the cost function.
+After the gradients are computed, the parameters are updated accordingly by optimization algorithms such as stochastic gradient descent \cite{Santosh2022-2}. Formulas for updating weights and biases are shown in equation \ref{eq:w-update} and \ref{eq:b-update}, where $\alpha$ is a learning rate (which controls the speed of learning - if changes to the parameters are too great, the minimum can be missed, if changes are too small, the minimum will not be reached in a reasonable time) and $E$ is the cost function \cite{Goodfellow2016, LeCun2015}.
 
 \begin{align}
 \label{eq:w-update}
