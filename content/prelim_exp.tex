@@ -37,12 +37,46 @@ The project file structure can be seen in figure \ref{fig:project-structure}.
 \end{figure}
 
 \subsection{Normalization Experiments}
-Since the images come from different datasets, institutions, and surgical procedures (core needle biopsies, surgical resections), we applied a Macenko normalization to all H\&E stained images with a random image selected as a reference image. The visual result can be seen in figure \ref{}. As we can see, this caused the images were shifted into the purple-like colours. We considered other approaches to select a reference image, but as recent study \cite{Ivanov2024} showed, than when selecting only a single reference image the results will always be biased and suboptimal. Therefore we would like to try experimenting with their proposed method of selecting multiple images to obtain better results. We would also like to try the normalization method used in \cite{Vahadane2015}, which showed promising results.
+Since the images come from different datasets, institutions, and surgical procedures (core needle biopsies, surgical resections), we applied a Macenko normalization to all H\&E stained images with a random image selected as a reference image. The visual result can be seen in figure \ref{fig:work-norm}. As we can see, this caused the images were shifted into the purple-like colours. We considered other approaches to select a reference image, but as recent study \cite{Ivanov2024} showed, than when selecting only a single reference image the results will always be biased and suboptimal. Therefore we would like to try experimenting with their proposed method of selecting multiple images to obtain better results. We would also like to try the normalization method used in \cite{Vahadane2015}, which showed promising results.
+
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/work-normalization.png}
+    \par\end{centering}
+    \caption{The images before and after applying normalization}
+    \label{fig:work-norm}
+\end{figure}
 
 \subsection{Single-cell Cropping}
-Next preprocessing step involved cropping out single cell from the larger PNG image. Since the location and size of each cell's bounding box was provided within the JSON file, the cells were easily cropped out using a simple Python script. The visual procedure of cropping out the cells from normalized images can be seen in figure \ref{}.
+Next preprocessing step involved cropping out single cell from the larger PNG image. Since the location and size of each cell's bounding box was provided within the JSON file, the cells were easily cropped out using a simple Python script. The visual procedure of cropping out the cells from normalized images can be seen in figure \ref{fig:work-cell-crop}.
+
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/work-cell-cropping.png}
+    \par\end{centering}
+    \caption{The cropping of individual cells with respect to their bounding boxes}
+    \label{fig:work-cell-crop}
+\end{figure}
+
+Some of the cropped images contained black artifacts, where full rows or columns of pixels had black colour. These were removed in order to not compromise the generation of the pseudo-labels.
 
 \subsection{GrabCut Experiments}
-We use these single-cell images as an input for the GrabCut algorithm provided by the Open CV library. In this step we wanted to create the pseudo-labels for the cells, which could be used further to train a deep learning model. We experimented with different combinations of normalized/non-normalized images, tried to apply the power law (gamma) transformation to the images and Contrast Limited Adaptive Histogram Equalization (CLAHE) method with varying parameters as well. We also experimented with different number of pixels that were set as sure background as a GrabCut parameter, for example we let $N$ brightest pixels be the sure background (since cell nuclei are coloured by haematoxylin into deep purple and blue colours, while the tissue and cellular matrix is coloured into more bright red and pink tones). 
+We use these single-cell images as an input for the GrabCut algorithm provided by the Open CV library. In this step we wanted to create the pseudo-labels for the cells, which could be used further to train a deep learning model. We experimented with different combinations of normalized/non-normalized images, tried to apply the power law (gamma) transformation to the images and Contrast Limited Adaptive Histogram Equalization (CLAHE) method (figure \ref{fig:work-clahe}) with varying parameters as well. We also experimented with different number of pixels that were set as sure background as a GrabCut parameter, for example we let $N$ brightest pixels be the sure background (since cell nuclei are coloured by haematoxylin into deep purple and blue colours, while the tissue and cellular matrix is coloured into more bright red and pink tones). 
 
-The best visual result we obtained can be seen in figure \ref{}. It was done on the normalized images, with applied CLAHE (clip limit was set to 100 and tile grid size to (1,1)) and 100 brightest pixels ($\frac{100}{256} = 0.390625 = 39.0625\%$ of image pixels) set as sure background to GrabCut. As we can see from the figure \ref{}, although the resulting masks look promising they are still far from ideal, especially in images where there is lower contrast between the cell nuclei and surrounding area. This challenge needs to be addressed in the next phase of work. We mention different methods for obtaining pseudo-label masks we want to experiment with in the former chapter \ref{chap-solution-concept}. 
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/work-cont-adj.png}
+    \par\end{centering}
+    \caption{The cell images before and after applying CLAHE}
+    \label{fig:work-clahe}
+\end{figure}
+
+The best visual result we obtained can be seen in figure \ref{}, where we can see the original cell images and the obtained GrabCut masks. It was done on the normalized images, with applied CLAHE (clip limit was set to 100 and tile grid size to (1,1)) and 100 brightest pixels ($\frac{100}{256} = 0.390625 = 39.0625\%$ of image pixels) set as sure background to GrabCut. As we can see from the figure \ref{}, although the resulting masks look promising, they are still far from ideal, especially in the images where there is lower contrast between the cell nuclei and surrounding area or a nearby dark artifact. This challenge needs to be addressed in the next phase of work. We mention different methods for obtaining pseudo-label masks we want to experiment with in the former chapter \ref{chap:solution-concept}. 
+
+\begin{figure}[H]
+    \begin{centering}
+    \includegraphics[width=14cm]{assets/images/work-grabcut-result.png}
+    \par\end{centering}
+    \caption{The original cell images and the obtained GrabCut masks}
+    \label{fig:work-grabcut}
+\end{figure}
