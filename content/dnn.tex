@@ -252,7 +252,7 @@ A_L &= \varphi(Z)
 The final output layer will then return the predicted output value for each sample. At the beginning of the training, the output values will be almost random, but as the training continues, the predicted values should converge towards the ground truth values - this is the desired behaviour \cite{Goodfellow2016, LeCun2015}.
 
 \paragraph{Cost function computation}
-After the sample (or samples) are fed forward through the network, we get either a matrix or vector of output values or a single output value. Next step is to compute the error of the network using one of the aforementioned cost functions, e.g. dice loss in case of image data. The error is than propagated backwards through the network and weights and biases are adjusted in a way that will minimize the cost function. This algorithm is called backpropagation.
+After the sample (or samples) are fed forward through the network, we get either a matrix or vector of output values or a single output value. Next step is to compute the error of the network using one of the aforementioned cost functions, e.g. dice loss in case of image data. The error is than propagated backwards through the network and weights and biases are adjusted in a way that will minimize the cost function. This algorithm is called backpropagation \cite{Goodfellow2016}.
 
 \paragraph{Backpropagation}
 In order for network to learn, it should implement some kind of algorithm, that will adjust its learnable parameters (weights and biases) in a way, that the overall error will be lower next time the input samples are fed forward through the network. Backpropagation computes the gradients for each layer starting with the output layer, and by utilizing the chain rule of calculus, it propagates the error back through the network to the first hidden layer \cite{LeCun2015}.
@@ -306,7 +306,7 @@ When evaluating a model's performance, various different metrics exist that can 
 
 We will briefly describe some of the evaluation metrics in the following paragraphs. 
 
-\paragraph{Accuracy, Precision, Recall, and F1 Score} Calculation of these basic metrics is displayed in equations \ref{eq:accuracy}, \ref{eq:precision}, \ref{eq:recall}, and \ref{eq:f1}. They describe the relationships between the number of samples belonging to either the true positive (TP), true negative (TN), false positive (FP), or false negative (FN) groups.
+\paragraph{Accuracy, Precision, Recall, and F1-score} Calculation of these basic metrics is displayed in equations \ref{eq:accuracy}, \ref{eq:precision}, \ref{eq:recall}, and \ref{eq:f1}. They describe the relationships between the number of samples belonging to either the true positive (TP), true negative (TN), false positive (FP), or false negative (FN) groups.
 
 \begin{align}
 \label{eq:accuracy}
