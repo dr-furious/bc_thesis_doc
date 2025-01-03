@@ -1,4 +1,5 @@
 \chapter{Preliminary Experiments}
+\label{chap:prelim-exp}
 
 \section{Dataset}
 In our work we use the TIGER dataset which was released with the challenge under the same name on the Grand Challenge platform \cite{tiger_dataset}. It contains H\&E stained WSIs of Her2 positive and TNBC breast cancer tissues obtained by core needle biopsies or surgical resections. The size of a single pixel equals approximately 0.5 \textmu m on all images. The dataset is released in three formats. We work with the one called WSIROIS. The WSIs come from three different institutions:
@@ -37,7 +38,7 @@ The project file structure can be seen in figure \ref{fig:project-structure}.
 \end{figure}
 
 \subsection{Normalization Experiments}
-Since the images come from different datasets, institutions, and surgical procedures (core needle biopsies, surgical resections), we applied a Macenko normalization to all H\&E stained images with a random image selected as a reference image. The visual result can be seen in figure \ref{fig:work-norm}. As we can see, this caused the images were shifted into the purple-like colours. We considered other approaches to select a reference image, but as recent study \cite{Ivanov2024} showed, than when selecting only a single reference image the results will always be biased and suboptimal. Therefore we would like to try experimenting with their proposed method of selecting multiple images to obtain better results. We would also like to try the normalization method used in \cite{Vahadane2015}, which showed promising results.
+Since the images come from different datasets, institutions, and surgical procedures (core needle biopsies, surgical resections), we applied a Macenko normalization to all H\&E stained images with a random image selected as a reference image. The visual result can be seen in figure \ref{fig:work-norm}. As we can see, this caused that the images were shifted into the purple-like colours. In chapter \ref{chap:solution-concept} we mention other techniques that could improve this issue, but which we did not yet perform.
 
 \begin{figure}[H]
     \begin{centering}
