@@ -1,10 +1,17 @@
 % SETTINGS - LATEX
 % to change name, title, supervisor etc. go to preamble/preamble.tex
-\newcommand{\myFontSize}[0] {12pt}
+\newcommand{\myFontSize}[0] {11pt}
 \newcommand{\mySpacing}[0] {1.5}
 \newcommand{\myBibliography}[0] {bib/refs, appendices/refs1}
 
-\documentclass[12pt,a4paper,twoside]{book}
+% oneside ← force single-sided layout
+% openany ← allow chapters to start on the next page, no blank inserted
+\documentclass[
+  12pt,              
+  a4paper,
+  oneside,           
+  openany            
+]{book}
 
 % Use babel for language support
 \usepackage[english]{babel}
@@ -24,11 +31,11 @@
 
 % ----- IN FINAL WORK -----
 % Annotation
-% \include{preamble/annotation}
+\include{preamble/annotation}
 
 % ----- IN FINAL WORK -----
 % Acknowledgements
-\include{preamble/acknowledgements}
+%\include{preamble/acknowledgements}
 
 % Table of contents
 \tableofcontents{}
@@ -41,19 +48,15 @@
 % References segment
 \begin{refsegment}
 
-\clearpage\null
 \include{content/abbreviations}
 
 % Introduction
-\clearpage\null
 \input{content/intro}
 
 % Chapter 1
-\clearpage\null
 \input{content/comp_vision}
 
 % Chapter 2
-\clearpage\null
 \input{content/dnn}
 
 
@@ -64,29 +67,23 @@
 % -------------------------
 
 % Related Work
-\clearpage\null
 \input{content/related}
 
-% Solution Concept
-\clearpage\null
-\input{content/solution_concept}
+% Our Work
+\input{content/our_work}
 
-% Preliminary Experiments
-\clearpage\null
-\input{content/prelim_exp}
 
 % ----- IN FINAL WORK -----
 % Conclusion
 %\clearpage\null
-%\input{content/conclusion}
+\input{content/conclusion}
 
 % Resume
 %\clearpage\null
-%\input{content/resume}
+\input{content/resume}
 % -------------------------
 
 % Bibliography
-\clearpage\null
 
 \printbibliography[heading=references,segment=\therefsegment,resetnumbers=true]
 
@@ -96,7 +93,6 @@
 % Appendix
 \appendix
 
-\clearpage\null
 
 \include{appendices/appendix1}
 

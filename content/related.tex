@@ -1,4 +1,6 @@
 \chapter{Related Work}
+\label{chapter:related}
+
 Precise manual cell annotation on huge WSI slides is a laborious task that needs to be performed by skilled expert pathologists. There exists a large number of models trained on the pixel-level masks for cell segmentation, which perform remarkably well. In the field of weak supervision for cell segmentation, a number of studies focus either on weak supervision in the form of point annotations in H\&E slides, or weak supervision with bounding box annotations of cells in microscopic imaging or DNA cytometry. However, we did not find many studies focusing on weakly annotated cell segmentation, especially from the histopathological H\&E stained slides, when annotations were presented in the form of bounding boxes. Therefore, to comprehensively review the current state of research, we will first examine studies that utilize bounding box cell annotations in histology. Subsequently, we will explore selected papers focusing on cell annotations using bounding boxes in modalities other than histology, as well as those addressing weakly supervised cell segmentation in histology employing point annotations of cell nuclei.
 
 % short intro, what they do and propose, findings, modalities
@@ -7,6 +9,8 @@ Precise manual cell annotation on huge WSI slides is a laborious task that needs
 % results and metrics (tables)
 
 \section{Guided Prompting in SAM for Weakly Supervised Cell Segmentation in Histopathological Images \cite{Tyagi2023}}
+\label{section:related-1}
+
 The authors of this work explore the applicability of the Segment Anything Model (SAM), using guided prompting, to the cell segmentation task from histology image slides, where the cells are only annotated using bounding box labels. Their results outperformed other models for weakly supervised segmentation by a huge margin.
 
 Three different datasets were used, and since each dataset was annotated with pixel-level masks, these were converted into the bounding boxes for the purpose of this study and the segmentation mask labels were not used during the training. If the dataset also contained class labels for individual cell nuclei, these labels were not used as this study is not concerned with cell classification. The datasets used were: 
@@ -60,6 +64,8 @@ From the results displaying the Dice scores shown in figure \ref{fig:rw-sam-dice
 \end{figure}
 
 \section{A pathomic approach for tumor-infiltrating lymphocytes classification on breast cancer digital pathology images \cite{Verdicchio2023}}
+\label{section:related-2}
+
 The second study aimed to classify TILs in H\&E stained images of breast cancer based on the handcrafted set of features, to achieve a better model explainability. Even though the main focus of this study is different from our goals, it is relevant and interesting for us for two reasons:
 
 \begin{enumerate}
@@ -82,6 +88,8 @@ The resulting segmentation masks were verified by an expert microscopist. This m
 The study further worked on the TIL/non-TIL classification task and identifying the relevant features, but since this is not our primary interest, we only briefly describe the methodology and results. The study analyzed 71 features split into five groups (6 Fourier Shape Descriptors features - FSD, 8 gradient features, 26 Haralick features, 12 intensity-based features, 19 morphometry features). Out of them, 21 were selected as patomic features. These should best describe the properties of TILs. Then five different classification models (Random-Forest, Decision Tree, Linear Discriminant Analysis, K-Nearest Neighbors, Multi-layer Perceptron) with three different resampling techniques (none, synthetic minority oversampling technique - SMOTE, Down) were trained using these features. The AUC (area under the ROC curve), accuracy, precision, sensitivity, specificity, and F1-score were used as evaluation metrics. The Random-Forest classifier achieved the best result with an AUC of 0.86, where the resampling technique did not make a significant difference.
 
 \section{DDTNet: A dense dual-task network for tumor-infiltrating lymphocyte detection and segmentation in histopathological images of breast cancer \cite{Zhang2022}}
+\label{section:related-3}
+
 The third work introduces a dense dual-task network (DDTN), which is used both for TIL detection and segmentation in breast cancer H\&E stained images using only point annotations. These two modules share the same backbone, which allows them to learn from one another and promote each other. The ultimate goal of this network is to perform a precise TIL instance segmentation.
 
 The training and testing workflows of the network can be seen in figures \ref{fig:rw-ddtn-train} and \ref{fig:rw-ddtn-test}. During the training phase, the network produces three output types for cells - bounding boxes, cell contours, and cell masks. The separate semi-automatic tool is used to create segmentation masks, from which bounding boxes and cell contours are derived. These are then used to guide the training of the model. During the inference phase, a network is used to produce the aforementioned three types of output again. Cell masks and contours are then unified to create cell segmentation masks and these are further merged with the detection bounding boxes to provide the final output.
@@ -155,6 +163,8 @@ Moreover, the study also evaluated the model's ability to generalize, by trainin
 \end{figure}
 
 \section{Nuclei segmentation with point annotations from pathology images via self-supervised learning and co-training \cite{Lin2023}}
+\label{section:related-4}
+
 In the fourth work. The authors present a self-supervised approach that generates segmentation masks from point annotations of cell nuclei in H\&E stained images.
 
 Two datasets were used and since each dataset was annotated using pixel-level annotations, these were converted to point annotations that were set approximately to the center of each mask. The datasets were:
@@ -195,12 +205,14 @@ Pixel accuracy, F1-score, Dice coefficient, Aggregated Jaccard Index, Detection 
 \end{figure}
 
 \section{Weakly Supervised Deep Nuclei Segmentation With Sparsely Annotated Bounding Boxes for DNA Image Cytometry \cite{Liang2023}}
+\label{section:related-5}
+
 The last work focuses on segmenting cell nuclei in DNA image cytometry from bounding box annotations using a teacher-student network setup.
 
 Two datasets were used:
 
 \begin{itemize}
-    \item DNA-ICM database, contains 23.485 images of cervical cancer screening stained with feulgen and eosin. Each image has $4096\!\times\!2816$ pixels. Together the dataset contains more than 1M cell nuclei. 18,266 images were selected for training and validation and 5,219 for testing. The authors used a semi-automated approach to get pixel-level masks for the test set. For the training and validation sets, they initially generated the pixel-level masks with traditional methods and then let experts refine them.
+    \item DNA-ICM database, contains 23,485 images of cervical cancer screening stained with feulgen and eosin. Each image has $4096\!\times\!2816$ pixels. Together the dataset contains more than 1M cell nuclei. 18,266 images were selected for training and validation and 5,219 for testing. The authors used a semi-automated approach to get pixel-level masks for the test set. For the training and validation sets, they initially generated the pixel-level masks with traditional methods and then let experts refine them.
     \item ISBI14 dataset, containing 16 real and 945 synthetic images of cervical cytology. 8 real and 45 synthetic images were used for training, while the rest were used for testing.
 \end{itemize}
 
