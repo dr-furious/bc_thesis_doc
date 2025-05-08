@@ -296,6 +296,8 @@ This effect is not desired because it means that the model cannot generalize wel
 
 
 \section{Evaluation Metrics}
+\label{chapter:dnn:eval}
+
 When evaluating a model's performance, various different metrics exist that can be used. The evaluation metrics also depend on the task the model was trained for. During classification tasks, depending on the predicted and real values for each sample, we can differentiate four groups of results:
 
 \begin{itemize}
@@ -361,6 +363,7 @@ The ROC Space and example of ROC Curve is displayed in figure \ref{fig:roc}. Are
 \end{align}
 
 \section{Architectures}
+\label{chapter:dnn-section:arch}
 Neural network architectures like Convolutional Neural Networks \cite{LeCun2015-2} and U-Net \cite{Ronneberger2015} have proven to be effective in medical image analysis \cite{Santosh2022-2}. In recent years, also a concept of Vision Transformers \cite{Dosovitskiy2020, Hu2023} used in medical imaging shows promising results \cite{Shamshad2023, Hu2023, He2023}. In further sections, we describe each architecture and its contribution to the analysis of medical images and Digital Pathology.
 
 \subsection{Convolutional Neural Networks}
@@ -577,16 +580,16 @@ The self-attention mechanism and multi-head self-attention are the key component
 
 Vision Transformers have achieved great success along with CNNs in many applications of the medical imaging domain in tasks such as medical image classification, segmentation, restoration, synthesis, medical object detection, and more \cite{Shamshad2023}.
 
-\section{Active Learning}
-Deep learning models performing supervised learning, although achieving great performance, require a substantial amount of labeled data. In the medical imaging domain it is even harder to collect a dataset with high-quality annotations \cite{Nath2021}. 
+%\section{Active Learning}
+%Deep learning models performing supervised learning, although achieving great performance, require a substantial amount of labeled data. In the medical imaging domain it is even harder to collect a dataset with high-quality annotations \cite{Nath2021}. 
 
-The concept of active learning can serve as a potential solution to this problem \cite{Nath2021, Wang2023}. Pool-based active learning is a standard active learning strategy \cite{Wang2023}. In this methodology, a model is trained with a smaller set of annotated data and then we let it predict the labels of samples in the unlabeled dataset (we call this also a pool of unlabeled data). Then those samples are selected, which have the greatest informative value and potential to improve the model in the next iteration of training. Different selection strategies exist, for example, we can select those samples that the model was least certain about (uncertainty sampling), or we let a set of models do the labeling and select those samples, in which there was the greatest disagreement among the models (query-by-committee) \cite{Wang2023}. These samples are then sent to the oracle (e.g. medical professional) for labeling and are added back into the annotated dataset and after enough samples are annotated by the oracle, the model is retrained \cite{Wang2023}. A visual example of this process can be seen in figure \ref{fig:active-learning}.
+%The concept of active learning can serve as a potential solution to this problem \cite{Nath2021, Wang2023}. Pool-based active learning is a standard active learning strategy \cite{Wang2023}. In this methodology, a model is trained with a smaller set of annotated data and then we let it predict the labels of samples in the unlabeled dataset (we call this also a pool of unlabeled data). Then those samples are selected, which have the greatest informative value and potential to improve the model in the next iteration of training. Different selection strategies exist, for example, we can select those samples that the model was least certain about (uncertainty sampling), or we let a set of models do the labeling and select those samples, in which there was the greatest disagreement among the models (query-by-committee) \cite{Wang2023}. These samples are then sent to the oracle (e.g. medical professional) for labeling and are added back into the annotated dataset and after enough samples are annotated by the oracle, the model is retrained \cite{Wang2023}. A visual example of this process can be seen in figure \ref{fig:active-learning}.
 
-\begin{figure}[H]
-    \begin{centering}
-    \includegraphics[width=14cm]{assets/images/active-learning.png}
-    \par\end{centering}
-    \caption{Active learning in medicine \cite{Wang2023}}
-    \label{fig:active-learning}
-\end{figure}
+%\begin{figure}[H]
+%    \begin{centering}
+%    \includegraphics[width=14cm]{assets/images/active-learning.png}
+%    \par\end{centering}
+%    \caption{Active learning in medicine \cite{Wang2023}}
+%    \label{fig:active-learning}
+%\end{figure}
 
