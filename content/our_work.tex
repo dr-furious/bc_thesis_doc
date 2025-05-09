@@ -2,12 +2,22 @@
 \label{chap:prelim-exp}
 
 \section{Overview}
-This work presents a method dealing with challenges where we have a fully annotated dataset, however very small in size, and a large dataset but weakly annotated. We aim to overcome these challenges by implementing a hybrid approach for semantic segmentation of lymphocyte cells. Firstly, we try to train and validate a model on the small dataset itself. Then we use preprocessing and computer vision techniques to generate various pseudo-mask sets out of bounding-box annotations for the weakly annotated dataset and train a model on it, which is again validated on the small, fully annotated dataset. Then we try to identify and select the best fusing strategy for the mask sets, in order to utilize different abilities of the sets to capture the cell region. Next, we select the best model (with the most successful mask fusing strategy) and fine-tune it using a portion of data in the fully annotated dataset. We evaluate each of these experiments with Dice coefficient and IoU, and also create a confusion matrix for the final model, displaying which cell types were most confusing for it. We start with the fundamental part - the description of the datasets used.
+This work presents a method dealing with challenges where we have a fully annotated dataset, however very small in size (TNBC dataset \cite{TNBC-nuclei-seg-extended}), and a large dataset but weakly annotated (TIGER dataset \cite{tiger_dataset}). We aim to overcome these challenges by implementing a hybrid approach for semantic segmentation of lymphocyte cells. The overview of the whole approach is displayed in Figure \ref{fig:dg-overview}. The hybrid method consists of a preprocessing module, which prepares data for training and evaluation; then the pseudo-mask creating module, which creates the pseudo-masks for the TIGER dataset images. The resulting image patches are then used for the training of the deep learning segmentation model, that we describe in Section \ref{section:dl-model}.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/dg-overview.png}
+\par\end{centering}
+\caption{The overview of our hybrid approach for semantic segmentation 
+\label{fig:dg-overview}}
+\end{figure}
+
+Firstly, we try to train and validate a model on the small dataset itself. Then we use preprocessing and computer vision techniques to generate various pseudo-mask sets out of bounding-box annotations for the weakly annotated dataset and train a model on it, which is again validated on the small, fully annotated dataset. Then we try to identify and select the best fusing strategy for the mask sets, in order to utilize different abilities of the sets to capture the cell region. Next, we select the best model (with the most successful mask fusing strategy) and fine-tune it using a portion of data in the fully annotated dataset. We evaluate each of these experiments with Dice coefficient and IoU, and also create a confusion matrix for the final model, displaying which cell types were most confusing for it. We start with the fundamental part - the description of the datasets used.
 
 \section{Datasets}
 \label{sec:datasets}
 
-\paragraph{TIGER} In our work, we use the TIGER dataset, which was released with the challenge under the same name on the Grand Challenge platform \cite{tiger_dataset}. It contains H\&E stained WSIs of Her2 positive and TNBC breast cancer tissues obtained by core needle biopsies or surgical resections. The images were scanned using 20x magnification. The dataset is released in three formats. We work with the one called WSIROIS. The WSIs come from three different institutions:
+\paragraph{TIGER} In our work, we use the Tumor Infiltrating Lymphocytes in Breast Cancer - TIGER - dataset, which was released with the challenge under the same name on the Grand Challenge platform \cite{tiger_dataset}. It contains H\&E stained WSIs of Her2 positive and TNBC breast cancer tissues obtained by core needle biopsies or surgical resections. The images were scanned using 20x magnification. The dataset is released in three formats. We work with the one called WSIROIS. The WSIs come from three different institutions:
 
 \begin{enumerate}
     \item TCGA (151 WSIs) dataset, contains images of TNBC from the TCGA-BRCA archive, annotations and magnification were adopted to be in line with those used further.
@@ -71,6 +81,7 @@ An example of an image and its bounding box labels can be seen in Figure \ref{fi
 \end{figure}
 
 \section{Deep Learning Model}
+\label{section:dl-model}
 
 \subsection{Architecture}
 As a deep learning model for semantic segmentation, we employ the U-Net architecture. U-Net is a powerful architecture, and as we mention in Chapter \ref{chapter:dnn}, in Section \ref{chapter:dnn-section:arch}, it is also widely used in the medical imaging domain. Specifically, we use the ResNet-34 encoder as the U-Net's backbone, which is already pretrained on the ImageNet dataset. This choice was based on the fact that residual blocks further improve the U-Net's ability to learn, as we continue to write in Section \ref{chapter:dnn-section:arch} of Chapter \ref{chapter:dnn}. In the state-of-the-art, which we present in Chapter \ref{chapter:related}, authors in \cite{Zhang2022, Liang2023} also use ResNet architectures, and specifically, ResNet-34 is used in \cite{Lin2023}. The inspiration to initialize the encoder with weights pretrained on the ImageNet dataset came from the state-of-the-art works as well, where a similar approach was used in \cite{Zhang2022, Lin2023, Liang2023}. The full architecture of the model can be seen in Figure \ref{fig:our-architecture}.
@@ -92,7 +103,7 @@ The input for the model is an image of size $128\times128$ pixels in a 3 - RGB -
 The loss function used during training is the Dice Loss function. This loss function is the preferred function to be used in the segmentation of objects and is also frequently used in the medical imaging domain, as described in \cite{Zhang2021}.
 
 \subsection{Optimization}
-We used the Adam optimizer, and the initial learning rate was set to 0.001, and it was reduced every 5 epochs by a factor of 0.1. Early stopping was also used, where the patience was set to 10 epochs - if the validation loss was not improved over the 10 epochs, the training stopped to prevent overfitting.
+We used the Adam optimizer, and the initial learning rate was set to 0.001, and it was reduced every 5 epochs by a factor of 0.1. Early stopping was also used, where the patience was set to 10 checks - if the validation loss was not improved during the training and it got worse at least on 10 checks, the training stopped to prevent overfitting. Checks were performed during every validation run - after every epoch.
 
 \subsection{Training}
 Every training was set to run for 100 epochs, if it was not stopped earlier. The batch size was set to 16 samples. Checkpoints of the model were periodically saved every epoch - always the best checkpoint (in terms of validation loss). If CUDA framework was available, the training run on the GPU, if not then on the CPU. During the training stage, we monitored the model's performance on various variables. These included accuracy, recall, precision, Dice coefficient, IoU, and the running loss.
@@ -105,7 +116,15 @@ Upon completing the training process, we initiated the final evaluation of the s
 We assessed the model using both quantitative and qualitative methods. The quantitative evaluation included the Dice coefficient and IoU metrics - we describe these in more detail and why they are most suitable for segmentation tasks in Chapter \ref{chapter:dnn}, in Section \ref{chapter:dnn:eval}. For qualitative assessment, we visualized the predicted binary masks alongside the ground truth masks to facilitate direct comparison.
 
 \section{Data Preprocessing}
-Since we work with two very distinct datasets, and furthermore, the TIGER dataset is composed of three other datasets, we need to employ a robust preprocessing framework in order to align all datasets on the same level.
+Since we work with two very distinct datasets, and furthermore, the TIGER dataset is composed of three other datasets, we need to employ a robust preprocessing framework in order to align all datasets on the same level. In Figure \ref{fig:dg-preprocessing} we can see how the images and masks from each dataset are preprocessed. Below we describe each preprocessing step for each image and mask set.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/dg-preprocessing.png}
+\par\end{centering}
+\caption{The preprocessing pipelines of both TIGER and TNBC datasets
+\label{fig:dg-preprocessing}}
+\end{figure}
 
 \subsection{Normalization} 
 TIGER and TNBC datasets pose several challenges to us. Firstly, as we described in section \ref{sec:datasets}, data come from four distinct sources (three for TIGER and one for TNBC) - this means that the staining is very different, which we can see in Figure \ref{fig:mix-no-norm}.
@@ -125,7 +144,7 @@ TIGER and TNBC datasets pose several challenges to us. Firstly, as we described 
     \caption{TIGER image – TC}
   \end{subfigure}
 
-  \par\vspace{1em} % line break with a little vertical space
+  \par\vspace{0.5em} % line break with a little vertical space
 
   % Second row (2 images)
   \begin{subfigure}[b]{0.32\textwidth}
@@ -159,7 +178,7 @@ We employ the multi-target Macenko stain normalization technique as described in
     \caption{TIGER image – TC}
   \end{subfigure}
 
-  \par\vspace{1em} % line break with a little vertical space
+  \par\vspace{0.5em} % line break with a little vertical space
 
   % Second row (2 images)
   \begin{subfigure}[b]{0.32\textwidth}
@@ -203,7 +222,7 @@ The next step was to generate the pseudo-masks. For this, we created different v
   \end{subfigure}
 
   % Line break to start the second row; adjust vertical space as needed
-  \par\vspace{1em}
+  \par\vspace{0.5em}
 
   % Second row of three subfigures
   \begin{subfigure}[b]{0.32\textwidth}
@@ -383,6 +402,7 @@ The third experiment build on the second. It compared the different fusing strat
 In the fourth experiment, we utilized a transfer learning strategy, where we took the best model trained during the third experiment and fine-tuned it using part of the fully annotated TNBC dataset.
 
 \subsection{Experiment 1 - Training on Small Dataset with Full Annotations}
+\label{sub:exp-1}
 In the first experiment, we wanted to check whether the small, fully annotated TNBC dataset would be sufficient for training of the segmentation model.
 
 \paragraph{Data}
@@ -401,37 +421,400 @@ Always two folds were used as the training set and one fold was used as the test
 \bar{M} &= \frac{\sum_{i=1}^{n} M_i \cdot W_i}{\sum_{i=1}^{n} W_i}
 \end{align}
 
-\paragraph{Experiment Workflow}
-The workflow of this experiment is simple. We train the U-Net model using the TNBC dataset, with the provided ground truth masks and evaluate it on the same dataset.
+The run of this experiment is simple. We train the U-Net model using the TNBC dataset, with the provided ground truth masks and evaluate it on the same dataset.
 
 \paragraph{Results}
+The experiment ran on average around 35 epochs due to early stopping. From the training and validation loss in Figure \ref{fig:exp1-loss} we can observe that the model was not able to learn when trained only on the small, although fully annotated dataset. This can be seen both on the graph spikes on the training loss as well as on the validation loss, which was not able to improve significantly after the first 10 epochs. We see this also on the evaluation metrics, which are summarized in Table \ref{tab:exp1-metrics}, where the Dice coefficient was 18.91\% and the IoU was 10.64\%. In the Figure \ref{fig:exp1-results} we can see that the model was not able to differentiate between different cell nuclei types nor it was able to distinguish the cell nuclei and the background area.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ p{5.0cm} | p{5.0cm} }
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\ 
+\hline
+Dice coefficient &  18.91 \\ 
+\hline
+IoU &  10.64 \\ 
+\hline
+\end{tabular}
+\caption{Results of the model trained on the TNBC dataset.}
+\label{tab:exp1-metrics}
+\end{table}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/exp1-loss.png}
+\par\end{centering}
+\caption{The loss function during training (green) and validation (orange) of the model trained on the TNBC dataset.
+\label{fig:exp1-loss}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % First row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-1-pred.png}
+    \caption{Image 1 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-2-pred.png}
+    \caption{Image 2 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-3-pred.png}
+    \caption{Image 3 prediction}
+  \end{subfigure}
+
+  % Line break to start the second row; adjust vertical space as needed
+  \par\vspace{0.5em}
+
+  % Second row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-1-gt.png}
+    \caption{Image 1 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-2-gt.png}
+    \caption{Image 2 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-3-gt.png}
+    \caption{Image 3 ground truth}
+  \end{subfigure}
+  \caption{Visual evaluation of model trained on the TNBC dataset. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \label{fig:exp1-results}
+\end{figure}
 
 \subsection{Experiment 2 - Pseudo-mask Generating Strategies}
 \label{sub:exp-2}
+In the second experiment, we used the 24 different pseudo-masks to train 24 different models. We wanted to compare the different models based on the pseudo-mask sets they were trained on.
 
 \paragraph{Data}
-
-\paragraph{Experiment Workflow}
+As a training data we used the TIGER image patches. Together 19,386 image patches were used in the training set. Pseudo-mask sets were used as ground truth labels for the training of the segmentation model. We explain the generation of these sets in detail in Section \ref{section:mask-generation}. Since these image patches come with weak annotations, we needed to evaluate the model on the TNBC dataset. For the evaluation, we used all 200 patches present in the TNBC datasets. The Dice coefficient and IoU were used as the evaluation metrics.
 
 \paragraph{Results}
+We summarized all results from this experiment in the Table \ref{tab:gen-res}. We can see that when compared to the first experiment, where we trained the same model only on the small fully annotated TNBC dataset, both Dice coefficient and IoU improved significantly. We can also see in Figure \ref{fig:exp2-loss} that the model was able to learn better and converge faster (14 epochs on average - more than 2-times faster than the model trained solely on the TNBC dataset)
+
+From the results we can see that the highest Dice coefficient (52.57\%) and IoU (36.01\%) were achieved by the model that was trained on the mask set, which was created from the histogram-equalized hematoxylin image source, where the blur was not applied and where the Otsu thresholding was used. 
+
+
+
+Next we noticed that the histogram equalization (HE) boosts the model's performance. It consistently improved segmentation metrics across all image sources, accept the ones that were using normalized image. For example, histogram-equalized and normalized image source with blur and adaptive thresholding reached 51.09\% Dice and 34.83\% IoU - over 11.5\% improvement in Dice coefficient and over 8\% improvement in IoU over the same non-equalized normalized pipeline (39.57\% Dice, 26.78\% IoU).
+
+We also observed that pseudo-mask sets that used median blur were greatly outperformed by the ones that did not use it. This might be because the blur reduces noise on one hand, but on the other hand it could distort cell boundaries and 'blend' the cell nuclei with its surroundings.
+
+Overall, there was no universally dominant strategy - when deciding whether to use only one image source, or only blur/no-blur or a single thresholding technique, we always observed that it could be overruled by a different strategy. This could be also demonstrated by the following examples:
+
+\begin{itemize}
+    \item On raw images, the best result is with no blur + Otsu thresholding (49.94\% Dice), but on normalized HE images the best is no blur + adaptive thresholding (51.09\% Dice), and on hematoxylin HE the top is no blur + Otsu thresholding (52.57\% Dice).
+    \item In the raw setting, disabling blur (49.94\% Dice) beats enabling it (46.92\% Dice) for Otsu thresholding, but in the hematoxylin case enabling blur (50.39\%) actually outperforms no-blur for Otsu thresholding when equalization is applied.
+    \item For raw HE images with blur applied, adaptive thresholding (47.50\% Dice) beats Otsu thresholding (44.86\% Dice), whereas for normalized images with blur applied, Otsu thresholding (49.45\% Dice) outperforms adaptive thresholding (39.57\% Dice) without equalization.
+\end{itemize}
+
+These observations inspired us to design another generation of sets of pseudo-masks, where we fuse the original 24 masks into one - we explain the process of pseudo-masks fusion in Section \ref{section:mask-fusion} and the experiment itself in Subsection \ref{sub:exp-3}.
+
+On the qualitative side, we can see in Figure \ref{fig:exp2-results} that the best model, trained on the hematoxylin image with HE, without blur and with Otsu thresholding, was able to segment cell nuclei much better than the model trained only on the small TNBC dataset. The issue here is that, although it can successfully determine whether a pixel belongs to a nuclei or tissue, it cannot determine very well if the pixel should belong to the lymphocyte nuclei, or some other cell type.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ l | c | c | c | c } 
+    \hline
+    \textbf{Image Source\tablefootnote{HE: histogram-equalized}}    & \textbf{Blurred}  & \textbf{Threshold Type} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
+    \hline
+    raw           & yes & adaptive & 44.18 & 29.28 \\
+    raw           & no  & adaptive & 46.53 & 31.45 \\
+    raw           & yes & otsu     & 46.92 & 31.60 \\
+    raw           & no  & otsu     & \textbf{49.94} & \textbf{33.77} \\
+    raw HE        & yes & otsu     & 44.86 & 29.42 \\
+    raw HE        & no  & otsu     & 47.28 & 31.91 \\
+    raw HE        & yes & adaptive & 47.50 & 31.98 \\
+    raw HE        & no  & adaptive & 49.30 & 33.33 \\[0.5ex]
+    \hline
+    normalized    & yes & adaptive & 39.57 & 26.78 \\
+    normalized    & no  & otsu     & 46.33 & 31.24 \\
+    normalized    & no  & adaptive & 48.30 & 32.48 \\
+    normalized    & yes & otsu     & 49.45 & 33.35 \\
+    normalized HE & no  & otsu     & 38.30 & 25.96 \\
+    normalized HE & no  & adaptive & 47.70 & 32.05 \\
+    normalized HE & yes & otsu     & 48.66 & 32.66 \\
+    normalized HE & yes & adaptive & \textbf{51.09} & \textbf{34.83} \\[0.5ex]
+    \hline
+    hematoxylin   & no  & otsu     & 41.61 & 27.46 \\
+    hematoxylin   & no  & adaptive & 45.18 & 29.77 \\
+    hematoxylin   & yes & adaptive & 47.94 & 32.16 \\
+    hematoxylin   & yes & otsu     & 49.19 & 33.10 \\
+    hematoxylin HE& yes & adaptive & 48.06 & 32.20 \\
+    hematoxylin HE& yes & otsu     & 50.39 & 34.22 \\
+    hematoxylin HE& no  & adaptive & 52.35 & 35.97 \\
+    hematoxylin HE& no  & otsu     & \textbf{52.57} & \textbf{36.01} \\
+    \hline
+  \end{tabular}
+  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask generation strategies.}
+  \label{tab:gen-res}
+\end{table}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/exp2-loss.png}
+\par\end{centering}
+\caption{The loss function during training (green) and validation (orange) of the best model trained with the hematoxylin histogram-equalized pseudo-mask, created without blur applied and with Otsu thresholding.
+\label{fig:exp2-loss}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % First row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-1-pred.png}
+    \caption{Image 1 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp-2-2-pred.png}
+    \caption{Image 2 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp-2-3-pred.png}
+    \caption{Image 3 prediction}
+  \end{subfigure}
+
+  % Line break to start the second row; adjust vertical space as needed
+  \par\vspace{0.5em}
+
+  % Second row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-2-gt.png}
+    \caption{Image 1 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-1-gt.png}
+    \caption{Image 2 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-3-gt.png}
+    \caption{Image 3 ground truth}
+  \end{subfigure}
+  \caption{Visual evaluation of the best model trained with the hematoxylin HE pseudo-mask, created without blur applied and with Otsu thresholding. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \label{fig:exp2-results}
+\end{figure}
 
 \subsection{Experiment 3 - Pseudo-mask Fusing Strategies}
+\label{sub:exp-3}
+The third experiment expanded further on the idea, that different pseudo-mask sets can sometimes better capture the nuclei under varying conditions as we saw in experiment 2 in Subsection \ref{sub:exp-2}. For this purpose we try to combine the power of different pseudo-mask sets to create one pseudo-mask that will be used for the training. In this experiment we want to compare different fusing strategies for the resulting pseudo-mask.
 
 \paragraph{Data}
-
-\paragraph{Experiment Workflow}
+Similarly to the experiment 2, we work with the TIGER dataset as the training set for the model, and evaluate it on the TNBC dataset. The major change is the usage of fused masks. We present the different fusing strategies in Section \ref{section:mask-fusion}. Together there are 8 fused pseudo-mask sets, created with both best quartile agreement levels and voting consensus. The rest of the experiment setting is the same as it was in the experiment 2.
 
 \paragraph{Results}
+From the results summary presented in Table \ref{tab:fusion-strategies}, we can clearly state that the consensus method - where either 24 out of 24, 23 out of 24, 22 out of 24, or 21 out of 24 masks voted for a pixel in a fused pseudo-mask - heavily outperformed the quartile agreement strategy, where the best 100\%, 75\%, 50\%, or 25\% of the pseudo-masks voted for a pixel (if at least one mask voted for the pixel, the pixel was set as foreground - nuclei). The order of the best pseudo-masks was determined by the previous experiment, which we describe in Subsection \ref{sub:exp-2}, specifically the Dice coefficient values.
+
+The best model trained on the consensus strategy achieved Dice coefficient of 53.53\%, while the best model trained on the quartile strategy achieved Dice of 42.93\% - by 10.6\% worse than the best consensus strategy model.
+
+We also compare these two best models in terms of train and validation loss, which we can see in the Figure \ref{fig:exp3-loss}. There we see that the consensus model was able to learn better during training as well. The quartile model was not able to learn that good and the training even stopped earlier.
+
+Finally we compare these two models visually, in the Figure \ref{fig:exp3-results}. From the figure it is clear that the quartile model also captures cell nuclei surroundings, and is more prone to mark a non-lymphocyte nuclei as lymphocyte nuclei. The consensus model is much better at segmenting only the cell nuclei, however the same issue as in experiment 2 prevails - the model can identify cell nuclei, but it is harder for it to tell if it is a lymphocyte or non-lymphocyte nuclei.
+
+When we compare the best model from this experiment - the consensus model (53.53\% Dice) with the best model from experiment 2 - the model trained on the HE hematoxylin image, without blur and Otsu thresholding (52.57\%), we see that by fusing the masks and selecting the correct fusion strategy, we were able to improve the model's performance by 0.96\%.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ l | l | c | c } 
+    \hline
+    \textbf{Masks Set Type} & \textbf{Mask Set} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
+    \hline
+      consensus & leave 0 out & 50.88 & 34.96 \\
+      consensus & leave 1 out & \textbf{53.53} & \textbf{37.42} \\
+      consensus & leave 2 out & 52.31 & 36.35 \\
+      consensus & leave 3 out & 52.58 & 36.33 \\
+    \hline
+      quartile  & top 100\%   & 41.11 & 26.40 \\
+      quartile  & top 75\%    & 40.35 & 25.72 \\
+      quartile  & top 50\%    & \textbf{42.93} & \textbf{27.89} \\
+      quartile  & top 25\%    & 42.59 & 27.61 \\
+    \hline
+  \end{tabular}
+  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask fusion strategies.}
+  \label{tab:fusion-strategies}
+\end{table}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/exp3-loss.png}
+\par\end{centering}
+\caption{The loss function during training (green dashed) and validation (orange dashed) of the best model trained with the quartile strategy of fusing pseudo-masks, and the loss function during training (green solid) and validation (orange solid) of the best model trained with the consensus strategy of fusing pseudo-masks.
+\label{fig:exp3-loss}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % First row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-1-pred-top50.png}
+    \caption{Image 1 prediction - Top 50\%}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-2-pred-top50.png}
+    \caption{Image 2 prediction - Top 50\%}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-3-pred-top50.png}
+    \caption{Image 3 prediction - Top 50\%}
+  \end{subfigure}
+
+  % Line break to start the second row; adjust vertical space as needed
+  \par\vspace{0.5em}
+  
+ % Second row of three subfigures
+   \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-1-pred-l1o.png}
+    \caption{Image 1 prediction - Leave 1 out}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-2-pred-l1o.png}
+    \caption{Image 2 prediction - Leave 1 out}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-3-pred-l1o.png}
+    \caption{Image 3 prediction - Leave 1 out}
+  \end{subfigure}
+
+  % Line break to start the second row; adjust vertical space as needed
+  \par\vspace{0.5em}
+
+  % Third row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-1-gt.png}
+    \caption{Image 1 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-2-gt.png}
+    \caption{Image 2 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-3-gt.png}
+    \caption{Image 3 ground truth}
+  \end{subfigure}
+  \caption{Visual comparison of the best models trained with the quartile and consensus strategies and ground truth. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \label{fig:exp3-results}
+\end{figure}
+
 
 \subsection{Experiment 4 - Transfer Learning}
+In the last experiment, we wanted to build on the results of experiment 3. We decided to took the best model from that experiment and fine-tune it using a portion of data from the fully annotated TNBC dataset. We also experimented with the encoder freezing during the training to see if we could further improve the model's performance. 
 
 \paragraph{Data}
-
-\paragraph{Experiment Workflow}
+We use the model pretrained on the TIGER dataset. For the fine-tuning we use the TNBC dataset, with the exact same 3-fold split as we used in experiment 1, which we describe in Subsection \ref{sub:exp-1}. We always used 2 folds for fine-tuning and 1 fold for evaluation of the model. The final evaluation metrics were computed as a weighted average of the metrics reported in each fold evaluation. We fine-tuned the model under two conditions. We tried fine-tuning it with frozen encoder, which means that the weights of the encoder were not updated during the training, only the weights of the decoder. In the second approach, we trained the whole model, both encoder and decoder.
 
 \paragraph{Results}
+In the Table \ref{tab:transfer} we have summarized the final evaluation metrics of this experiment. We can see that when compared to the best model from experiment 3 (53.53\% Dice) - the consensus model, where 23 out of 24 masks voted for a pixel - both the model with unfrozen encoder (55.01) as the one with frozen encoder (57.59\% Dice) were able to slightly improve. Overall the best model was the model with frozen encoder during the fine-tuning - it achieved Dice coefficient of 57.59\% and IoU of 41.25\%.
+
+On the graph showing the training and validation loss of the model with frozen encoder in Figure \ref{fig:exp4-loss} we can see that the fine-tuning enabled the model to learn slightly more, but also that the training was very short (13 epochs) since the model could not improve further on the validation loss.
+
+Finally in Figure \ref{fig:exp4-results} we observe the similar behavior to the best models from experiments 2 and 3 - that the model is able to recognize the cell nuclei pixels, but has a problem of recognizing the pixels that belong to either lymphocyte nuclei or non-lymphocyte nuclei.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ p{5cm} | p{3cm} | p{3cm} } 
+    \hline
+    \textbf{Encoder status} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
+    \hline
+      Unfrozen & 55.01 & 38.6 \\
+      Frozen   & \textbf{57.59} & \textbf{41.25} \\
+    \hline
+  \end{tabular}
+  \caption{Dice and IoU percentages for the models fine-tuned on the TNBC dataset.}
+  \label{tab:transfer}
+\end{table}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=\textwidth]{assets/images/for_presentation/exp4-loss.png}
+\par\end{centering}
+\caption{The loss function during training (green) and validation (orange) of the model fine-tuned with the frozen encoder.
+\label{fig:exp4-loss}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % First row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-1-pred.png}
+    \caption{Image 1 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-2-pred.png}
+    \caption{Image 2 prediction}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-3-pred.png}
+    \caption{Image 3 prediction}
+  \end{subfigure}
+
+  % Line break to start the second row; adjust vertical space as needed
+  \par\vspace{0.5em}
+
+  % Second row of three subfigures
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-1-gt.png}
+    \caption{Image 1 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-2-gt.png}
+    \caption{Image 2 ground truth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-3-gt.png}
+    \caption{Image 3 ground truth}
+  \end{subfigure}
+  \caption{Visual evaluation of the model fine-tuned with the frozen encoder.}
+  \label{fig:exp4-results}
+\end{figure}
 
 \subsection{Experiments Summary}
+To summarize the experiments, we decided to put the evaluation metrics of the best model from each experiment into a single Table \ref{tab:summary-experiments}. There we can see that in each subsequent experiment, we were able to improve the overall performance on the corresponding model. The best model overall is the one trained on the TIGER dataset and the consensus fusion strategy, where 23 out of 24 masks voted for a pixel to be foreground (lymphocyte nuclei) and then fine-tuned on the TNBC dataset.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ l | c | c } 
+    \hline
+    \textbf{Experiment}                                  & \textbf{Best Dice (\%)} & \textbf{Best IoU (\%)} \\
+    \hline
+    1 – Training with full annotations                   & 18.91                   & 10.64                  \\
+    2 – Mask generating strategies                       & 52.57                   & 36.01                  \\
+    3 – Mask fusing strategies                           & 53.53                   & 37.42                  \\
+    4 – Transfer Learning                                & \textbf{57.59}          & \textbf{41.45}          \\
+    \hline
+  \end{tabular}
+  \caption{Comparison of best Dice and IoU across experiments.}
+  \label{tab:summary-experiments}
+\end{table}
+
 
 \section{Tools}
 Python, 
