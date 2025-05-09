@@ -162,7 +162,7 @@ TIGER and TNBC datasets pose several challenges to us. Firstly, as we described 
   \label{fig:mix-no-norm}
 \end{figure}
 
-We employ the multi-target Macenko stain normalization technique as described in \cite{Ivanov2024}, where we select 8 reference images from the TIGER and 2 reference images from the TNBC dataset. This number is arbitrary, but in \cite{Ivanov2024} authors experimented with a different number of reference images (2-20) and showed that the higher number has slightly better results, but if the number is too high, there are no significant improvements. Given the sizes of our respective datasets, we decided to go with the 8 and 2 images. Then we used the same 10 reference images to normalize both datasets. The normalization technique improved the color inconsistencies, as we can see in Figure \ref{fig:mix-norm}.
+Firstly we tried randomly selected single image as a reference image for Macenko normalization, which laid suboptimal results when assessed visually. We have considered other approaches to selecting a reference image, but as a recent study \cite{Ivanov2024} showed when selecting only a single reference image for Macenko normalization, the results will always be biased and suboptimal. Therefore, we employ the multi-target Macenko stain normalization technique as described in \cite{Ivanov2024}, where we select 8 reference images from the TIGER and 2 reference images from the TNBC dataset. This number is not arbitrary, in \cite{Ivanov2024} authors experimented with a different number of reference images (2-20) and showed that the higher number has slightly better results, but if the number is too high, there are no significant improvements. They also experimented with different ways of computing the stain matrix, and the best results were achieved by the \textit{avg-post} method, and this method peaked when 10 reference images were selected \cite{Ivanov2024}. Given the sizes of our respective datasets, we decided to go with the 8 and 2 images and also with the \textit{avg-post} method. Then we used the same 10 reference images to normalize both datasets. The normalization technique improved the color inconsistencies, as we can see in Figure \ref{fig:mix-norm}.
 
 \begin{figure}[H]
   \centering
@@ -714,7 +714,7 @@ When we compare the best model from this experiment - the consensus model (53.53
     \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-3-gt.png}
     \caption{Image 3 ground truth}
   \end{subfigure}
-  \caption{Visual comparison of the best models trained with the quartile and consensus strategies and ground truth. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \caption{Visual comparison of the best models trained with the quartile (top row) and consensus strategies (middle row), and ground truth (bottom row). Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
   \label{fig:exp3-results}
 \end{figure}
 
@@ -797,7 +797,7 @@ Finally in Figure \ref{fig:exp4-results} we observe the similar behavior to the 
 \end{figure}
 
 \subsection{Experiments Summary}
-To summarize the experiments, we decided to put the evaluation metrics of the best model from each experiment into a single Table \ref{tab:summary-experiments}. There we can see that in each subsequent experiment, we were able to improve the overall performance on the corresponding model. The best model overall is the one trained on the TIGER dataset and the consensus fusion strategy, where 23 out of 24 masks voted for a pixel to be foreground (lymphocyte nuclei) and then fine-tuned on the TNBC dataset.
+To summarize the experiments, we decided to put the evaluation metrics of the best model from each experiment into a single Table \ref{tab:summary-experiments}. There we can see that in each subsequent experiment, we were able to improve the overall performance of the corresponding model. The best model overall is the one trained on the TIGER dataset and the consensus fusion strategy, where 23 out of 24 masks voted for a pixel to be foreground (lymphocyte nuclei) and then fine-tuned on the TNBC dataset, with encoder frozen during the training.
 
 \begin{table}[H]
   \centering
@@ -817,19 +817,19 @@ To summarize the experiments, we decided to put the evaluation metrics of the be
 
 
 \section{Tools}
-Python, 
-NumPy, 
-PyTorch, 
-PyTorch Lightning,
-Segmentation Models PyTorch, 
-Torchstain multitarget macenko norm
-Azure ml studio
-Jupyter Notebooks
-OpenCV
-scikit-learn
-Weights and Biases - For easier monitoring, logging, data visualization and the overall improved management of the whole training process, we use the Weights and Biases 
-matplotlib.pyplot
-PyCharm
-Git
-GitHub
-CUDA
+Python \cite{python}, 
+NumPy \cite{numpy}, 
+matplotlib.pyplot \cite{matplotlib}
+Jupyter Notebooks \cite{jupyter}
+OpenCV \cite{open-cv}
+scikit-learn \cite{scikit-learn}
+PyTorch \cite{pytorch},
+PyTorch Lightning \cite{pytorch-ligthning}
+Segmentation Models PyTorch \cite{smp}, 
+Torchstain multitarget macenko norm \cite{torchstain}
+PyCharm \cite{pycharm}
+Git \cite{git}
+GitHub \cite{github}
+CUDA \cite{cuda}
+Azure ml studio \cite{azure-ml}
+Weights and Biases - For easier monitoring, logging, data visualization and the overall improved management of the whole training process, we use the Weights and Biases \cite{wandb}
