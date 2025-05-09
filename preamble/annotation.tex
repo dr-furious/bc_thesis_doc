@@ -4,7 +4,7 @@
 \section*{Annotation}
 
 \begin{minipage}[t]{1\columnwidth}%
-Slovak University of Technology Bratislava 
+Slovak University of Technology, Bratislava 
 
 Faculty of Informatics and Information Technologies
 
@@ -21,17 +21,18 @@ Supervisor: \mySupervisor
 
 \bigskip{}
 
-In this work, we analyze the existing state-of-the-art techniques and methods used in weak segmentation tasks, especially focusing on digital pathology and tumor-infiltrating lymphocytes in breast cancer patients. The cells are weakly annotated using bounding boxes, and we propose a method for creating pixel-level masks using traditional techniques of computer vision, such as GrabCut, with a combination of deep learning models.
+%Breast cancer is one of the leading causes of death among women, and accurate histopathological analysis plays a significant role in diagnosis and treatment planning. Tumor-infiltrating lymphocytes (TILs) have emerged as a promising biomarker. However, manual analysis and counting of TILs in histopathological slides remain time-consuming, error-prone, and require skilled professionals. Deep learning models have shown promise in automating this process, but they depend on large amounts of high-quality annotated data. 
+
+In this thesis, we look at state-of-the-art weak segmentation techniques in digital pathology, focusing on segmenting lymphocyte cell nuclei in breast cancer patients. The main challenge stems from the weak annotations of nuclei in the form of bounding boxes instead of exact pixel-level masks. To tackle this challenge, we introduce a hybrid approach, where we use traditional computer vision techniques, such as Otsu and adaptive thresholding, and marked watershed, to create pixel-level pseudo-masks that are used to train a U-Net model. 
+
+We show that using a small, although fully annotated, dataset is insufficient to train the model. Next, we try training the model on the pseudo-masks created by different computer vision pipelines. To use the combined strength of different pseudo-masks, we then try creating a second generation of them by trying various fusion strategies. Finally, we try a transfer learning approach, where a model pretrained on a large dataset with pseudo-masks is fine-tuned on a small, fully annotated dataset. We evaluate each model on quantitative metrics such as Dice coefficient and Intersection over Union, and qualitative metrics by visualizing its predictions.
 
 % english annotation content here
 
 
 \newpage{}\thispagestyle{empty}
 
-\newpage
-\thispagestyle{empty}
-\mbox{}
-\newpage
+
 
 \thispagestyle{empty}
 \section*{Anotácia}
@@ -47,7 +48,7 @@ Autor: \myName
 
 Bakalárska práca: \myTitle
 
-Vedúci diplomového projektu: \mySupervisor
+Vedúci bakalárskeho projektu: \mySupervisor
 
 \myDateSK%
 \end{minipage}
@@ -63,11 +64,6 @@ V tejto práci analyzujeme existujúce state-of-the-art techniky a metódy použ
 
 
 \newpage{}
-
-\newpage
-\thispagestyle{empty}
-\mbox{}
-\newpage
 
 
 

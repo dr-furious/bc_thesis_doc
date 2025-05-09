@@ -30,20 +30,25 @@
 \include{preamble/title}
 
 % ----- IN FINAL WORK -----
-% Annotation
-\include{preamble/annotation}
+% Declaration
+\include{preamble/declaration}
 
 % ----- IN FINAL WORK -----
 % Acknowledgements
-%\include{preamble/acknowledgements}
+\include{preamble/acknowledgements}
+
+% ----- IN FINAL WORK -----
+% Annotation
+\include{preamble/annotation}
+
 
 % Table of contents
 \tableofcontents{}
 
 % List of listings
-%\listoffigures\newpage{}
+\listoffigures\newpage{}
 %\renewcommand\listoflistingscaption{List of Listings}
-%\listoflistings\newpage{}
+\listoftables\newpage{}
 
 % References segment
 \begin{refsegment}
@@ -85,7 +90,7 @@
 
 % Bibliography
 
-\printbibliography[heading=references,segment=\therefsegment,resetnumbers=true]
+\printbibliography[heading=bibintoc,segment=\therefsegment,resetnumbers=true]
 
 \end{refsegment}
 
