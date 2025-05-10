@@ -1,1 +1,117 @@
-\chapter*{Resumé}
+\chapter{Resumé}
+
+\section{Úvod}
+V posledných rokoch ukazujú algoritmy počítačového videnia a hlbokých neurónových sietí výborné výsledky v mnohých oblastiach spracovania obrazu, napríklad detekcie, segmentácie, či klasifikácie. To má výrazný dopad na mnohé oblasti a jednou z nich je aj medicína. V medicíne sa používajú rôzne zobrazovacie techniky, ktoré pomáhajú pri diagnostike. Jednou z takýchto techník je aj histológia, kedy je odobraný kúsok tkaniva, ktorý je následne ďalej spracovaný. Vzorky sa často zafarbujú, pre zvýšenie kontrastu medzi rôznymi štruktúrami, ako sú jadrá buniek a tkanivá. Jedným z najpoužívanejších zafarbovacích protokolov je zafarbovanie pomocou hemaoxylínu a eozínu, kde hematoxylín zafarbuje jadrá buniek do odtieňov fialovej a eozín zafarbuje okolité tkanivo do odtieňov ružovej. Takto ofarbené vzorky sa potom ďalej analyzujú.
+
+V našej práci sa zameriavame na automatizovanú segmentáciu lymfocytov z nádorového tkaniva prsníkov, ktoré je ofarbené hematoxylínom a eozínom. Tieto lymfocyty môžu totiž slúžiť ako potenciálne biomarkery pri prognóze nádorového ochorenia, akým je aj rakovina prsníkov. V bežnej praxi, musí kvalifikovaný patológ manuálne počítať a odhadovať množstvo a priestorové usporiadanie týchto lymfocytov, čo je časovo náročné a náchylné na chyby a nepresnosti. Algoritmy umelej inteligencie a hlbokých neurónových sietí ukázali v posledných rokoch vysoký potenciál pri spracovaní medicínskych obrazových dát. Tieto algoritmy však vyžadujú veľké množstvo presne anotovaných dát, pričom príprava týchto presných anotácií opäť spočíva na medicínskych expertoch. Preto v našej práci navrhujeme riešenie, ktoré využíva dva verejné zdroje dát:
+
+\begin{itemize}
+    \item TIGER dataset, ktorý je slabo anotovaný a poskytuje anotácie jadier lymfocytov v tvare ohraničujúcich rámčekov.
+    \item TNBC dataset, ktorý je úplne anototvaný a poskytuje presné anotácie jadier lymfocytov na pixelovej úrovni.
+\end{itemize}
+
+Keďže anotácie datasetu TIGER sú vo forme ohraničujúcich rámčekov, cieľ tejto práce má dve časti:
+
+\begin{enumerate}
+    \item Vyvinúť, implementovať a porovnať rôzne stratégie vytvárania pseudo-masiek pre dataset TIGER, za použitia metód počítačového videnia.
+\end{enumerate} Natrénovanie segmentačného modelu hlbokého učenia, pričom pri tréningu budú použité pseudo-masky pripravené rôznymi spôsobmi a tento model bude vyhodnotený metrikami ako sú Dice koeficient a IoU.
+
+\section{Analýza problému}
+
+\subsection{Počítačové videnie}
+Videnie je jedným z našich primárnych zmyslov, a preto je pochopiteľné, že hľadáme a vyvíjame rôzne metódy na zachytenie, uskladnenie a spracovanie obrazu. Počítačové videnie, ako podmnožina počítačovej vedy, sa zameriava na využitie počítačov pre extrakciu zmysluplných informácií z obrazových dát, čím sa snaží napodobniť schopnosti ľudského mozgu. Medzi hlavné úlohy patrí napríklad klasifikácia, detekcia a segmentácia objektov na obrazových dátach. Tieto úlohy vieme riešiť buď tzv. tradičnými metódami počítačového videnia, s vopred zadefinovaný postupom, alebo algoritmami strojového učenia a umelej inteligencie. Medzi tradičné metódy segmetácie obrazu vieme zaradiť napríklad Otsu funkcia prahovania (ang. \textit{thresholding}), adaptívne funkcia prahovania, alebo watershed algoritmus.
+
+Strojové učenie a umelá inteligencia tiež tvoria súčasť počítačového videnia. Pri klasickom programovaní sú to ľudia, kto tvorí počítačový program, zatiaľ čo pri strojovom učení necháme stroj, aby vytvoril optimálny program, pokiaľ sú mu známe vstupy a výstupy. Stroj sa učí toto mapovanie medzi vstupmi a výstupmi analýzou príznakov a vzorov vo vstupe. Hlboké učenie a špeciálne konvolučné neurónové siete sú známe veľmi dobrou schopnosťou identifikácie týchto vzorov aj v obrazových dátach.
+
+Kvalita vstupných dát pre tieto algoritmy je veľmi dôležitá. Preto sa využívajú rôzne techniky predspracovania dát, ako prvý krok prípravy dát. V doméne digitálnych histologických snímkov sa často používa farebná normalizácia, ktorá má zmierniť výkyvy v ofarbení snímok hematoxylínom a eozínom. Medzi najpoužívanejšie normalizačné techniky patrí napríklad tzv. Macenko normalizácia.
+
+\subsection{Hlboké neurónové siete}
+Umelé neurónové siete sú inšpirované biologickými neuróny, kedy jeden neurón príma vstupy zo svojho okolia a následne sa buď "aktivuje", teda vyšle signál pre ďalšie neuróny, alebo ostáva neaktívny. Základnou stavebnou jednotkou neurónových sietí je teda neurón. Jedná sa o funkciu, ktorá má vstupy, a každý vstup násobí jeho prislúchajúcou váhou. Takto vynásobené vstupy sú sčítané a pripočíta sa k nim ešte prahová hodnota. Takáto funkcia je stále lineárna, preto, aby sme boli schopný riešiť aj nelineárne problémy, prechádza výsledná hodnota do tzv. aktivačnej funkcie, ktorá je nelineárna. Medzi príklady aktivačných funkcií patrí napríklad funkcia sigmoid, tanh, alebo ReLU. Neróny vedia byť následne usporiadané do vrstiev, kde neuróny z jednej vrstvy prijímajú vstupy od neurónov z prechádzajúcej vrstvy a posielajú výstupy z aktivačných funkcií ako vstup pre neuróny z nasledujúcej vrstvy. Týmto spôsobom vzniká neurónová sieť. Výstup neurónov na poslednej vrstve je predikcia siete. Táto predikcia sa potom porovnáva so skutočnou hodnotou výstupu a vyrátava sa tzv. chybová funkcia. Chyba siete je následne spätne propagovaná cez všetky vrstvy a neuróny, ktoré si následne upravujú svoje parametre (váhy a prahy) tak, aby minimalizovali chybovú funkciu. Poznáme rôzne chybové funkcie, napríklad MSE chybová funkcia alebo Dice chybová funkcia.
+
+V priebehu rokov vznikli rôzne architektúry neurónových sietí. Medzi najznámejšie patria konvolučné neurónové siete, ktoré sú schopné zachytiť komplexné vzory v dátach s narastajúcou hĺbkou siete. Konvolučné siete využívajú konvolučné bloky spolu s ReLU aktivačnou funkciou na extrakciu relevantných čŕt z obrázku.
+
+Jednou z architektúr konvolučných neurónových sietí je aj U-Net architektúra, ktorá dosahuje výborné výsledky pri segmentácii objektov z obrazových dát. Pri segmentácii chceme vytvoriť pixelovú masku, kde budú vyznačené pixely, na ktorých sa nachádza hľadaný objekt. Obmedzením klasických konvolučných architektúr je neschopnosť zachovať priestorové informácie po počiatočných vrstvách na extrakciu príznakov. Tento problém rieši nový typ architektúry – enkóder-dekóder architektúra. Enkóder extrahuje najviac opisné črty obrázka a komprimuje ich, pričom znižuje redundanciu informácii a dekóder sa následne snaží z tejto zakódovanej reprezentácie obrázka naspäť poskladať pôvodný obrázok. Stratová funkcia pritom počíta rozdiel medzi pôvodným obrázkom a obrázkom vytvoreným dekóderom. Ak je dekodér schopný vytvoriť obraz veľmi podobný pôvodnému, znamená to, že skrytá reprezentácia obrazu, ktorú enkóder extrahoval, je dostatočne kvalitná. Následne je dekóder odstrániť a namiesto neho pripojiť modul pre klasifikáciu, segmentáciu alebo lokalizáciu, ktorý využije príznaky naučené enkóderom. V segmentačných úlohách sa do časti dekódera zavádza jednoduchá modifikácia. Namiesto generovania pôvodného obrazu sa dekóder trénuje na vytváranie segmentačnej masky, kde každý pixel nesie pravdepodobnosť príslušnosti k určitej triede. Táto vypočítaná maska pravdepodobnostnej distribúcie sa následne použije spolu s originálnou maskou v stratovej funkcii na výpočet ich rozdielu a usmernenie tréningu. U-Net architektúra tiež pozostáva z enkódera a dekódera, pričom ešte predstavuje koncept tzv. preskočených spojení, kedy posledný výstup z každej vrstvy enkódera je zreťazený s prvým vstupom do každej vrstvy dekódera, ako kompenzáciu za možnú stratu čŕt, ktorá mohla nastať pri zmenšovaní aktivačnej mapy obrázka.
+
+Medzi ďalšie varianty modelu U-Net patrí napríklad 3D U-Net, sieť, ktorá je podobná U-Net architektúre ale upravená pre prácu s 3D dátami, alebo Attention U-Net, ktorý využíva bránu pozornosti na upriamenie pozornosti siete na najdôležitejšie časti obrázka.
+
+Úplne iným typom architektúry sú tzv. Vision Transformery, ktoré využívajú mnoho blokov pozornosti na zachytenie globálneho kontextu z obrázku.
+
+\section{Naša práca}
+Táto práca predstavuje metódu, ktorá sa zaoberá výzvami, keď máme plne anotovaný súbor údajov, avšak veľmi malej veľkosti (dataset TNBC), a veľký dataset, ale slabo anotovaný (dataset TIGER). Naším cieľom je prekonať tieto výzvy implementáciou hybridného prístupu na sémantickú segmentáciu lymfocytov. Hybridný prístup sa skladá z predspracovania, ktoré pripravuje údaje na trénovanie a vyhodnotenie a zo samotného vytvárania pseudo-masiek. Výsledné výrezy obrázkov sa potom použijú na trénovanie segmentačného modelu hlbokého učenia - architektúry U-Net, s ResNet-34 dekóderom, ktorá bola predntrénovaná na ImageNet datasete. Hyperparametre modela sú nasledovné:
+
+\begin{itemize}
+    \item Dice stratová funkcia
+    \item Adam optimizér
+    \item Počiatočná rýchlosť učenia 0.001, znížená faktorom 0.1 každých 5 epoch
+    \item Tréning je nastavený na 100 epoch s predčasným zastavením, ak sa validačná chyba zhorší počas 10 kontrol, kontrola sa vykonáva po každej epoche
+\end{itemize}
+
+Najskôr sa pokúsime natrénovať a vyhodnotiť model na samotnom malom datasete. Potom použijeme techniky predspracovania a počítačového videnia na generovanie rôznych súborov pseudo-masiek z anotácií vo forme ohraničujúcich rámčekov pre slabo anotovaný dataset a natrénujeme na ňom model, ktorý opäť vyhodnotíme na malom, plne anotovanom datasete. Následne sa pokúsime identifikovať a vybrať najlepšiu stratégiu zlučovania súborov masiek, aby sme využili rôzne schopnosti súborov zachytiť oblasť bunkových jadier. Nakoniec vyberieme najlepší model (s najúspešnejšou stratégiou zlučovania masiek) a dotrénujeme ho pomocou časti údajov z plne anotovaného datasetu. Každý z týchto experimentov vyhodnotíme pomocou metrík ako Dice koeficient a IoU.
+
+\subsection{Datasety}
+Pracujeme s dvoma datasetmi. Prvým datasetom je TIGER dataset, ktorý obsahuje 1879 PNG obrázkov tkaniva rakoviny prsníkov, pod 20x zblížením, zafarbených hematoxylínom a eozínom. Obrázky sú rôznej veľkosti a pochádzajú z troch rôznych inštitútov. Dataset je anotovaný slabo, anotácie sú vo forme ohraničujúcich rámčekov.
+
+Druhým datasetom je dataset TNBC. Obsahuje 50 PNG obrázkov (od 11 pacientov) tkaniva rakoviny prsníkov, pod 40x zblížením, zafarbených hematoxylínom a eozínom. Všetky obrázky sú veľké $512\!\times\!512$ pixelov a sú k nim poskytnuté anotácie vo forme pixelových masiek, kde sú anotované rôzne triedy buniek, spolu 11 tried.
+
+\subsection{Predspracovanie}
+Keďže obrazové dáta pochádzajú z rôznych zdrojov, využívame multi-cieľovú Macenko normalizáciu, pričom používame 8 obrázkov z datasetu TIGER a 2 obrázky z datasetu TNBC. Následne normalizujeme obrázky v oboch datasetoch. Obrázky v TNBC datasete ešte preškálujeme faktorom 0.5, aby sme zmenili zblíženie z 40x na 20x. Následne vytvoríme z obrázkov z oboch datasetov výrezy o veľkosti $128\!\times\!128$. Pokiaľ sú obrázky z TIGER datasetu príliš malé, nepoužijeme ich. Spolu nám takto vznike 19 386 výrezov z TIGER datasetu a 200 výrezov z TNBC datasetu. Na maskách z TNBC zmeníme označenie pre triedy iné ako lymfocyty na pozadie a vytvoríme takto binárnu masku. Následne aj tieto masky preškálujeme faktorom 0.5 a vytvoríme z nich výrezy.
+
+Počas predspracovania vytvoríme aj 6 rôznych verzii obrázka, z obrázkov v TIGER datasete, konkrétne:
+
+\begin{itemize}
+    \item Pôvodný obrázok
+    \item Pôvodný obrázok s vyrovnaním histogramu (ang. \textit{histogram equalization})
+    \item Normalizovaný obrázok
+    \item Normalizovaný obrázok s vyrovnaním histogramu
+    \item Hematoxylínový obrázok
+    \item Hematoxylínový obrázok s vyrovnaním histogramu
+\end{itemize}
+
+Tieto verzie potom použijeme pri vytváraní pseudo-masiek.
+
+\subsection{Tvorba pseudo-masiek}
+Pre vytváranie pseudo-masiek používame sekvenciu metód počítačového videnia. Spolu používame 4 rôzne sekvencie, pričom každá je aplikovaná na každú verziu obrázka spomínanú vyššie. Týmto spôsobom dostaneme 24 rôznych pseudo-masiek pre jeden pôvodný obrázok. Tento proces vytvárania pseudo-masky prebieha nasledovne:
+
+\begin{enumerate}
+    \item Obrázok je načítaný spolu s jeho anotáciami vo forme ohraničujúcich rámčekov.
+    \item Následne sa z obrázka vyrežú jednotlivé lymfocyty podľa ohraničujúcich rámčekov.
+    \item Ďalej sa aplikujú 4 rôzne sekvencie metód počítačového videnia, teda z jedného pôvodného výrezu vzniknú 4 ďalšie. Tieto sekvencie sa líšia podľa aplikovaných funkcií:
+    \begin{itemize}
+        \item Otsu funkcia prahovania (ang. \textit{thresholding})
+        \item Adaptívna funkcia prahovania
+        \item Otsu funkcia prahovania spolu s rozmazaním obrázka
+        \item Adaptívna funkcia prahovania spolu s rozmazaním obrázka
+    \end{itemize}
+    \item V ďalšom kroku sa použije morfologické otváranie, ktoré odstráni malé artefakty ponechané po funkcii prahovania.
+    \item Predchádzajúce kroky nám vytvorili "prototyp" pseudo-masky. V ďalšom kroku použijeme tento prototyp pre algoritmus značkami-riadeného watershedu (ang. \textit{mark-controlled watershed}) spolu s pôvodnou verziou obrázku. Výsledkom je hotová pseudo-maska pre oblasť jedného bukového jadra.
+    \item V poslednom kroku spojíme všetky pseudo-masky jednotlivých lymfocytov a vytvoríme tak veľkú pseudo-masku veľkosti pôvodného obrázku.
+\end{enumerate}
+
+Takto sme spolu dostali 24 rôznych pseudo-masiek pre jeden obrázok. Ďalší spôsob vytvárania pseudo-masiek spočíval v zlučovaní týchto 24 do jednej. Tu sme použili 2 odlišné prístupy:
+
+\begin{enumerate}
+    \item Zoradili sme masky podľa úspešnosti príslušného modelu (podľa Dice koeficientu), a následne sme spojili 100\%, 75\%, 50\% a 25\% najlepších masiek do jednej.
+    \item Nechali sme hlasovať všetky masky pre každý pixel. Aby mohol byť pixel označený ako popredie (jadro lymfocytu), muselo zaňho hlasovať 24/24, 23/24, 22/24 alebo 21/24 masiek.
+\end{enumerate}
+
+Týmito prístupmi sme získali ďalších 8 sád masiek.
+
+\subsection{Experimenty}
+Náš navrhovaný systém sa vyvíjal s každým vykonaným experimentom, pretože každý experiment nadväzoval na predchádzajúci. Každý experiment bol vykonaný trikrát, aby sa znížilo riziko, že náhodná inicializácia parametrov modelu alebo rozdelenie trénovacích údajov na trénovaciu a validačnú sadu výrazne zlepší alebo výrazne zhorší konečné výsledky.
+
+Pri prvom experimente sme použili len samotný model U-Net ako model hlbokého učenia. Na túto úlohu sa použil plne anotovaný TNBC dataset. Vo výsledku tohto experimentu môžeme vidieť, že trénovanie modelu len na malej dátovej vzorke, hoci plne anotovanej, je nepostačujúce. Model dosiahol Dice koeficient 18,91\% a IoU 10,64\%.
+
+V druhom experimente sa použili pseudo-masky vytvorené kombináciou rôznych verzii obrázka a rôznych techník počítačového videnia. Pseudo-masky boli generované pre slabo anotovaný súbor údajov TIGER z poskytnutých anotácií ohraničujúcich rámčekov. Tie sa potom použili ako na následné trénovanie modelu U-Net, ktorý bol trénovaný na datasete TIGER. Na konečné hodnotenie sa použil dataset TNBC. Model natrénovaný na každej sade pseudo-masiek dosiahol výrazne lepšie výsledky oproti modelu trénovanému len na TNBC datasete. Najlepší výsledok dosiahol model trénovaný s hemtoxylínovou pseudo-maskou s vyrovnaním histogramu (ang. \textit{histogram equalization}), kde sa nepoužilo rozmazanie a bola použitá Otsu funkcia prahovania. Dosiahol Dice koeficient 52,57\% a IoU 36,01\%.
+
+Tretí experiment nadväzuje na druhý. Porovnávali sa v ňom rôzne stratégie zlučovania súborov masiek. Opäť sme tieto zlučované masky použili na trénovanie modelu U-Net na datasete TIGER a na konečné vyhodnotenie sa použil dataset TNBC. Jednoznačne lepšie výsledky dosiahol prístup zlučovania masiek prostredníctvom hlasovania, pričom najlepší spôsob hlasovania bol ten, v ktorom za každý pixel hlasovalo 23/24 masiek. Takto trénovaný model dosiahol Dice koeficient 53,53\% a IoU 37,42\%.
+
+Vo štvrtom experimente sme využili stratégiu učenia s prenosom (ang. \textit{transfer learning}), pri ktorej sme použili najlepší model natrénovaný počas tretieho experimentu a dotrénovali ho na TNBC datasete. Experimentovali sme aj so zamrazením enkóderu počas dotrénovania. Model som zamrazeným enkóderom dosiahol najlepšie výsledky, Dice 57.59\% a IoU 41.25\%.
+
+\section{Záver}
+Cieľom tejto práce bolo vyvinúť hybridný prístup, ktorý by sa dokázal vysporiadať s bežnými výzvami pri automatizovanej sémantickej segmentácii lekárskych snímok. Konkrétne výzvy predstavovali malý objem plne anotovaných údajov a veľký objem údajov, ktoré sú len slabo anotované. Úlohou bolo segmentovať jadrá lymfocytov. Aj to bola veľká výzva, pretože mnohé najmodernejšie práce pracujú so slabými anotáciami vo forme ohraničujúcich boxov, ale ich cieľom je vykonať segmentáciu jadier bez ohľadu na triedu bunkových jadier, zatiaľ čo v našej práci sa snažíme segmentovať špecifickú triedu jadier - jadrá lymfocytov. Podľa našich najlepších vedomostí v čase písania tejto práce nie je k dispozícii takmer žiadna výskumná práca týkajúca sa presne tohto nášho špecifického nastavenia. Na túto úlohu sme použili dva verejne dostupné datasety: TIGER \cite{tiger_dataset} dataset s anotáciami ohraničujúcich rámčekov jadier lymfocytov a dataset TNBC \cite{TNBC-nuclei-seg-extended}, ktorý poskytoval úplné anotácie vo forme masiek jadier lymfocytov na úrovni pixelov. 
+
+Vybrali sme model hlbokého učenia na základe najnovších poznatkov a použili sme známe metódy tradičného počítačového videnia, ako sú Otsu a adaptívne prahovanie a algoritmus značkami-riadeného watershedu, na prípravu rôznych súborov pseudo-masiek z anotácií ohraničujúcich polí. Potom sme ďalej vychádzali z myšlienky, že každá sada by mohla fungovať lepšie na rôznych obrázkoch, takže sme vyvinuli rôzne stratégie zlúčenia pseudo-masiek.
+
+V experimentoch sme dokázali, že trénovať model len na veľmi malom, hoci plne anotovanom, datasete TNBC je nedostatočné. Ten istý model, keď bol natrénovaný na väčšom datasete TIGER, aj keď s pseudo-maskami použitými počas trénovania, dosiahol lepšie výsledky v porovnaní s modelom natrénovaným výlučne na súbore údajov TNBC, a to z hľadiska koeficientu Dice aj IoU. Model, ktorý používal najlepšie zlúčenú pseudo-masku, dokázal ešte viac zlepšiť Dice koeficient aj IoU. Konečný model, ktorý bol predtrénovaný na datasete TIGER s pseudo-maskami a potom dotrénovaný na datasete TNBC, dokázal dosiahnuť najlepšie výsledky v koeficiente Dice a IoU spomedzi všetkých modelov.
+
+Medzi možné budúce zlepšenia môže patriť plne automatizovaný proces so samoučiacou sa slučkou, kde v prvej iterácii natrénujeme model pomocou pseudo-masiek vytvorených prostredníctvom tradične sekvencie metód počítačového videnia, potom ho necháme predpovedať masky na tom istom súbore údajov, na ktorom bol vyškolený, vďaka čomu vytvoríme "druhú generáciu" pseudo-masiek. Následne by sa model natrénoval na tejto druhej generácii pseudo-masiek a celý tento proces by sa iteratívne opakoval.

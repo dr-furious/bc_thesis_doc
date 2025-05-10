@@ -12,7 +12,7 @@ This work presents a method dealing with challenges where we have a fully annota
 \label{fig:dg-overview}}
 \end{figure}
 
-Firstly, we try to train and validate a model on the small dataset itself. Then we use preprocessing and computer vision techniques to generate various pseudo-mask sets out of bounding-box annotations for the weakly annotated dataset and train a model on it, which is again validated on the small, fully annotated dataset. Then we try to identify and select the best fusing strategy for the mask sets, to utilize different abilities of the sets to capture the cell region. Next, we select the best model (with the most successful mask-fusing strategy) and fine-tune it using a portion of the data in the fully annotated dataset. We evaluate each of these experiments with the Dice coefficient and IoU, and also create a confusion matrix for the final model, displaying which cell types were most confusing for it. We start with the fundamental part - the description of the datasets used.
+Firstly, we try to train and validate a model on the small dataset itself. Then we use preprocessing and computer vision techniques to generate various pseudo-mask sets out of bounding-box annotations for the weakly annotated dataset and train a model on it, which is again validated on the small, fully annotated dataset. Then we try to identify and select the best fusing strategy for the mask sets, to utilize different abilities of the sets to capture the cell region. Next, we select the best model (with the most successful mask-fusing strategy) and fine-tune it using a portion of the data in the fully annotated dataset. We evaluate each of these experiments with the Dice coefficient and IoU. We start with the fundamental part - the description of the datasets used.
 
 \section{Datasets}
 \label{sec:datasets}
@@ -127,7 +127,7 @@ Since we work with two very distinct datasets, and furthermore, the TIGER datase
 \end{figure}
 
 \subsection{Normalization} 
-TIGER and TNBC datasets pose several challenges to us. Firstly, as we described in section \ref{sec:datasets}, data come from four distinct sources (three for TIGER and one for TNBC) - this means that the staining is very different, which we can see in Figure \ref{fig:mix-no-norm}.
+TIGER and TNBC datasets pose several challenges to us. As we described in section \ref{sec:datasets}, data come from four distinct sources (three for TIGER and one for TNBC) - this means that the staining is very different, which we can see in Figure \ref{fig:mix-no-norm}.
 
 % Image
 \begin{figure}[H]
@@ -272,7 +272,7 @@ To be able to start training the segmentation model on the TIGER dataset, we nee
     \end{itemize}
     \item In the next step, the morphological opening is applied to remove small artifacts left after the thresholding.
     \item The previous operations created so far a 'prototype' of the pseudo-mask. In the subsequent step, the marked watershed is applied, which uses this prototype together with the initial cropped image region to create a final pseudo-mask.
-    \item Finally, the small pseudo-masks for individual cells are combined into a full-patch pseudo-mask
+    \item Finally, the small pseudo-masks for individual cells are combined into a full-image pseudo-mask
 \end{enumerate}
 
 \begin{figure}[H]
@@ -292,7 +292,7 @@ We use the $3\!\times\!3$ median blur with the intuition that it could remove sm
 The Otsu thresholding finds a threshold that minimizes intra-class variance and then binarizes the pixel values based on this threshold. Since this operation needs a grayscale image, we first do this conversion. Then we apply the Otsu thresholding method and inversion - this automatically computes the optimal Otsu threshold and also inverts the binarization so that dark nuclei appear as white foreground and background pixels become black.
 
 \paragraph{Adaptive Thresholding}
-In contrast to Otsu thresholding, adaptive thresholding computes the threshold for each pixel based on its neighborhood. We use the $11\!\times\!11$ adaptive thresholding with a constant of 2 - this ensures that we cover the small nuclei diameter but still preserve fine details. In the Equation \ref{eq:adaptive} we can see how the threshold $T(x,y)$ is computed for each pixel with coordinates $x$ and $y$. Firstly, a window $\mathcal{W}$ of size $B\!\times\! B$ is centered around the pixel. Then each pixel's grayscale intensity $I(u,v)$ within this window with pixel coordinates $u$ and $v$ is summed and then averaged. Finally, a constant is subtracted from this mean to bias the threshold below the local mean.
+In contrast to Otsu thresholding, adaptive thresholding computes the threshold for each pixel based on its neighborhood. We use the $11\!\times\!11$ adaptive thresholding with a constant of 2 - this ensures that we cover the small nuclei diameter but still preserve fine details. In the Equation \ref{eq:adaptive} we can see how the threshold $T(x,y)$ is computed for each pixel with coordinates $x$ and $y$. Firstly, a window $\mathcal{W}$ of size $B\!\times\! B$ is centered around the pixel. Then each pixel's grayscale intensity $I(u,v)$ within this window with pixel coordinates $u$ and $v$ is summed and then averaged. Finally, a constant is subtracted from this mean to bias the threshold below the local mean. Again, we use it with inversion, as in Otsu thresholding.
 
 \begin{align}
 \label{eq:adaptive}
@@ -391,7 +391,7 @@ Together, we obtained 8 sets of fused masks.
 \label{section:experiments}
 Our proposed system evolved with each performed experiment, since each experiment built on the previous one. We will describe each experiment in this section, with a focus on the data used for training and testing, the experiment setup and workflow, and the results of the experiment. Every experiment was run three times to reduce the risk that random initialization of the model's parameters, or the split of training data into training and validation subsets, would significantly improve or significantly worsen the final results.
 
-For the first experiment, we utilized just the UNet model itself as a deep learning module. The fully annotated TNBC dataset was used for this task.
+For the first experiment, we utilized just the U-Net model itself as a deep learning module. The fully annotated TNBC dataset was used for this task.
 
 The second experiment used the pseudo-masks generated by a combination of image sources and different computer vision techniques. The pseudo-masks were generated for the weakly annotated TIGER dataset from the provided bounding box annotations. These were then used as ground truth masks for subsequent training of the U-Net model, which was trained on the TIGER dataset. For the final evaluation, the TNBC dataset was used.
 
@@ -431,7 +431,6 @@ The experiment ran on average around 35 epochs due to early stopping. From the t
 \textbf{Metric} & \textbf{Value (\%)} \\ 
 \hline
 Dice coefficient &  18.91 \\ 
-\hline
 IoU &  10.64 \\ 
 \hline
 \end{tabular}
@@ -815,7 +814,7 @@ To summarize the experiments, we decided to put the evaluation metrics of the be
 
 
 \section{Tools}
-The whole project was written in the Python programming language \cite{python}. We used Python libraries such as NumPy \cite{numpy} for efficient numerical operations, and Matplotlib \cite{matplotlib} for the image, masks, and overlay visualizations. Furthermore, we utilized the power of Jupyter Notebooks \cite{jupyter} to be able to run parts of code and easily explore the data during the preprocessing and pseudo-mask creation stages, and also to be able to upload data and submit training on the remote clusters.
+The whole project was written in the Python programming language version 3.12  \cite{python}. We used Python libraries such as NumPy \cite{numpy} for efficient numerical operations, and Matplotlib \cite{matplotlib} for the image, masks, and overlay visualizations. Furthermore, we utilized the power of Jupyter Notebooks \cite{jupyter} to be able to run parts of code and easily explore the data during the preprocessing and pseudo-mask creation stages, and also to be able to upload data and submit training on the remote clusters.
 
 For the image manipulation, transformation, and other computer vision operations during the preprocessing, pseudo-masks generation, and pseudo-masks fusion stages, we relied on the OpenCV Python library \cite{open-cv}. For the multi-target Macenko stain normalization, we used the existing implementation from \cite{torchstain}. The whole preprocessing and pseudo-masks creation process was executed locally on a MacBook Air with an M1 Silicon chip, with 16 GB of RAM.
 
