@@ -313,7 +313,7 @@ We use the elliptical $3\!\times\!3$ morphological opening to remove any small a
 To obtain the final pseudo-mask, we employ the mark-controlled watershed. This includes a series of steps:
 \begin{enumerate}
     \item Firstly, the distance transform operation computes, for each foreground pixel in the so-far-created binary mask, the Euclidean distance to the nearest background pixel, producing a map whose peaks lie at object centers.
-    \item Secondly, we threshold the distance map, which keeps only the central ~30\% of each cell nuclei - this helps to separate the touching nuclei and gives us the pseudo-mask of sure foreground area (the sure nuclei area).
+    \item Secondly, we threshold the distance map, which keeps only the central ~30\% of each cell nucleus - this helps to separate the touching nuclei and gives us the pseudo-mask of sure foreground area (the sure nuclei area).
     \item Then we dilate the sure foreground with a $3\!\times\!3$ elliptical kernel to expand the region. Now we consider all pixels lying outside of these regions as sure background.
     \item After that, we subtract the sure foreground from the sure background mask. This gives us the regions that should have the shape of a ring and are 'unknown' - either background or foreground. Those are the pixels that lie on the boundaries of each cell.
     \item Next, we do marker labeling - we mark each connected component of the sure foreground mask with a different mark (integer), starting with number 1. Then we add number 1 to each pixel value. Lastly, we set those pixels that are marked as an unknown region to zero. This step ensures that:
@@ -328,7 +328,7 @@ To obtain the final pseudo-mask, we employ the mark-controlled watershed. This i
 After the mark-controlled watershed produces the delineated nuclei mask, we set all pixel values that are lower than or equal to 1 to 0 (sure background and delineation lines) and those that are greater than 1 (all nuclei components) to 1 to create a binary pseudo-mask.
 
 \paragraph{Full-patch Combining}
-After we obtain the small-sized pseudo-masks for each cell nuclei bounding box, we reconstruct the full-patch mask by firstly creating an image where all pixels have 0 values and then applying the binary OR operation with the small-sized pseudo-masks on the position from which they were cropped. By this, we get the final pseudo-mask for the original image, where pixels of nuclei regions have values of 1 and background pixels have values of 0.
+After we obtain the small-sized pseudo-masks for each cell nucleus bounding box, we reconstruct the full-patch mask by firstly creating an image where all pixels have 0 values and then applying the binary OR operation with the small-sized pseudo-masks on the position from which they were cropped. By this, we get the final pseudo-mask for the original image, where pixels of nuclei regions have values of 1 and background pixels have values of 0.
 
 \section{Pseudo-masks Fusion}
 \label{section:mask-fusion}
@@ -484,7 +484,7 @@ IoU &  10.64 \\
     \includegraphics[width=\linewidth]{assets/images/for_presentation/exp1-3-gt.png}
     \caption{Image 3 ground truth}
   \end{subfigure}
-  \caption{Visual evaluation of model trained on the TNBC dataset. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \caption{Visual evaluation of model trained on the TNBC dataset. Predicted lymphocytes (cyan) and ground truth lymphocytes (green).}
   \label{fig:exp1-results}
 \end{figure}
 
@@ -579,7 +579,7 @@ On the qualitative side, we can see in Figure \ref{fig:exp2-results} that the be
   \end{subfigure}\hfill
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp-2-3-pred.png}
+    \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-3-pred.png}
     \caption{Image 3 prediction}
   \end{subfigure}
 
@@ -602,7 +602,7 @@ On the qualitative side, we can see in Figure \ref{fig:exp2-results} that the be
     \includegraphics[width=\linewidth]{assets/images/for_presentation/exp2-3-gt.png}
     \caption{Image 3 ground truth}
   \end{subfigure}
-  \caption{Visual evaluation of the best model trained with the hematoxylin HE pseudo-mask, created without blur applied and with Otsu thresholding. Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \caption{Visual evaluation of the best model trained with the hematoxylin HE pseudo-mask, created without blur applied and with Otsu thresholding. Predicted lymphocytes (cyan) and ground truth lymphocytes (green).}
   \label{fig:exp2-results}
 \end{figure}
 
@@ -711,7 +711,7 @@ When we compare the best model from this experiment - the consensus model (53.53
     \includegraphics[width=\linewidth]{assets/images/for_presentation/exp3-3-gt.png}
     \caption{Image 3 ground truth}
   \end{subfigure}
-  \caption{Visual comparison of the best models trained with the quartile (top row) and consensus strategies (middle row), and ground truth (bottom row). Predicted lymphocytes (yellow) and ground truth lymphocytes (green).}
+  \caption{Visual comparison of the best models trained with the quartile (top row) and consensus strategies (middle row), and ground truth (bottom row). Predicted lymphocytes (cyan) and ground truth lymphocytes (green).}
   \label{fig:exp3-results}
 \end{figure}
 
@@ -789,7 +789,7 @@ Finally, in Figure \ref{fig:exp4-results} we observe a similar behavior to the b
     \includegraphics[width=\linewidth]{assets/images/for_presentation/exp4-3-gt.png}
     \caption{Image 3 ground truth}
   \end{subfigure}
-  \caption{Visual evaluation of the model fine-tuned with the frozen encoder.}
+  \caption{Visual evaluation of the model fine-tuned with the frozen encoder. Predicted lymphocytes (cyan) and ground truth lymphocytes (green).}
   \label{fig:exp4-results}
 \end{figure}
 
