@@ -1,0 +1,46 @@
+.
+├── configs/
+│   ├── azure_connect_example.json
+│   ├── azure_job.yaml
+│   ├── azure_upload_data.yaml
+│   ├── model_train_base.yaml
+│   └── paths.yaml
+├── data/
+│   ├── processed_tiger/
+│   ├── processed_tnbc/
+│   ├── raw_tiger/
+│   │   ├── images/
+│   │   └── coco_annotations_placeholder.json
+│   └── raw_tnbc/
+│       ├── images/
+│       └── masks/
+├── example_data/
+│   ├── processed_tiger/
+│   ├── processed_tnbc/
+│   ├── raw_tiger/
+│   │   ├── images/
+│   │   └── tiger-coco.json
+│   └── raw_tnbc/
+│       ├── images/
+│       └── masks/
+├── models/
+├── src/
+│   ├── azure/
+│   │   ├── azure_conda.yaml
+│   │   ├── azure_train.ipynb
+│   │   └── azure_upload_data.ipynb
+│   ├── models/
+│   │   ├── inference.ipynb
+│   │   ├── model_factory.py
+│   │   └── til_dataset.py
+│   ├── image_preprocessor.py
+│   ├── image_stats.py
+│   ├── mask_generator.py
+│   ├── sample.py
+│   └── utils.py
+├── .amlignore
+├── .gitignore
+├── main.ipynb
+├── main.py
+├── README.md
+└── requirements.txt

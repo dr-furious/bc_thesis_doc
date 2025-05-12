@@ -1,9 +1,11 @@
-\setcounter{figure}{0}
-\setcounter{listing}{0}
-
 \chapter{Plan of Work \label{appendix:plan} }
 \renewcommand{\thepage}{A-\arabic{page}}
 \setcounter{page}{1}
+
+\textbf{Bachelor's thesis evidence number:} FIIT-100241-116291
+
+\section{Winter Semester}
+In Table \ref{tab:winter_plan}, we can see a summarized plan of work for the winter semester. During this time, we familiarizing ourselves with the whole topic of weak segmentation and traditional methods of computer vision. We also explored the available datasets, and after we selected the TIGER dataset, we explored it in more depth. We were studying the state-of-the-art, gathering information, and running preliminary experiments. Later, we constructed an initial concept of experiments that should be performed. The experiments were performed more slowly than we anticipated because of the complicated dataset features, which caused us a slight delay, but on the other hand, we were now very confident with the dataset usage and knew better what we should do next to be successful.
 
 \begin{table}[h!]
 \centering
@@ -14,7 +16,7 @@
 \hline
 1-2 & Literature review on digital pathology and TIL detection. \\ 
 \hline
-3-6 & Study of deep learning techniques and architectures (CNNs, U-Net, Vision Transformers) and different pseudo-label generation techniques (GrabCut, water-shed, Otsu, QuPath). \\
+3-6 & Study of deep learning techniques and architectures (CNNs, U-Net, Vision Transformers) and different pseudo-label generation techniques (GrabCut, watershed, Otsu). \\
 \hline
 7 & Familiarization with the TIGER dataset. \\
 \hline
@@ -27,6 +29,11 @@
 \label{tab:winter_plan}
 \end{table}
 
+\section{Summer Semester}
+The Table \ref{tab:summer_plan} displays the plan for the summer semester. During this time, we had a large portion of work to do. We selected a TNBC dataset, which was fully annotated, as another dataset to be included in this work. We had to implement 24 different strategies for pseudo-mask generation and then perform the model training on all of them, and select the best one. We also came up with different methods of generating pseudo-masks (fusing the original 24 pseudo-masks), meaning that we had another large portion of experiments to perform. Then, a transfer learning approach idea came for the final model, which was the most successful. During the whole semester, we performed almost 600 trainings, and in comparison to the winter semester, the whole work has picked up speed. As we mentioned, we were adding more experiments as the work progressed. We were able to successfully build the pipeline of computer vision operations that generated different pseudo-masks, prepare the U-Net segmentation model, and were able to train it in the Azure cloud environment. 
+
+Given the many challenges we had to overcome, like the weakly annotated TIGER dataset, a very small TNBC dataset, inconsistencies across the datasets, and the challenging task of segmenting only a specific class of cell nuclei (not all cell nuclei), we conclude that this plan was fully adhered to and completed.
+
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|p{12.5cm}|}
@@ -34,15 +41,15 @@
 \textbf{Week} & \textbf{Planned Work} \\ 
 \hline
 \hline
-1-2 & Testing and refining the pseudo-label generation algorithm. \\
+1-2 & Continuing with the computer vision pipeline development. \\
 \hline
-3 & Selection of deep learning architectures for implementation. \\ 
+3 & Testing and refining the pseudo-label generation algorithm. \\ 
 \hline
-4-8 & Implementing, training and evaluation of the selected segmentation architectures (e.g., U-Net based architectures, Vision Transformers). Analysis of models using evaluation metrics (IoU, Dice coefficient). \\ 
+4-8 & Implementing, training, and evaluation of the U-Net segmentation model trained with various pseudo-masks. Analysis of the model using evaluation metrics (IoU, Dice coefficient). \\ 
 \hline
-9 & Fine-tuning the best-performing model. \\ 
+9 & Final experiments, preparation of the final thesis outline. \\ 
 \hline
-10-12 & Writing and presenting final report with results and conclusions. \\ 
+10-12 & Writing and presenting the final report with results and conclusions. \\ 
 \hline
 13 & Submission of final thesis. \\ 
 \hline
@@ -52,3 +59,372 @@
 \end{table}
 
 \chapter{Technical Documentation \label{appendix:td} }
+\renewcommand{\thepage}{B-\arabic{page}}
+\setcounter{page}{1}
+
+\section{Project's folder structure}
+\label{projects-folder-structure}
+
+\verbatiminput{assets/folder-tree.txt}
+
+\section{Description of folders and
+files}\label{description-of-folders-and-files}
+
+\subsection{\texttt{root} directory}\label{root-directory-files}
+
+\paragraph{.amlignore}
+Here is a list of folders and files that are ignored when a job is
+submitted to the Azure ML platform. When a job is submitted, Azure takes
+a snapshot of the directory it is given as the source directory. The
+files listed in \texttt{.amlignore} will be ignored by this operation.
+
+\paragraph{.gitignore}
+Files to be ignored by the Git versioning system.
+
+\paragraph{main.ipynb}
+In this Jupyter notebook, the whole preprocessing, pseudo-mask generating, and pseudo-mask fusing pipeline can be run. It also provides
+the visualizations of preprocessed images and pseudo-masks. This notebook has already been executed, so you can also see the outputs of each cell. Open
+the \texttt{main.ipynb }to see it.
+
+\paragraph{main.py}
+This is the main training and evaluation script. It can be run both
+locally and on the Azure ML platform. See Section \ref{how-to-run-the-demo} to see both possible
+options.
+
+\paragraph{README.md}
+In this file, the document with the same content as in this Chapter is.
+
+\paragraph{requirements.txt}
+Contains Python dependencies that need to be installed to run the project.
+
+\subsection{\texttt{config} directory files}
+\label{config-directory-files}
+
+\paragraph{azure\_connect\_example.json}
+Contains the information required to authenticate and connect to your
+Azure ML Workspace. You will need to fill out this configuration file, otherwise, the
+connection will not be successful. Keep the structure, just change the
+values to match your account.
+
+\paragraph{azure\_job.yaml}
+Contains all configuration values that are used to submit the job run,
+which will train the model. These include the data asset information,
+the environment information (environment where the job will run), the
+job information (like source directory to push to Azure ML, compute
+target, etc.), and the arguments to be passed to the \texttt{main.py}
+function once it is executed.
+
+\paragraph{azure\_upload\_data.yaml}
+Here is the information about the folder you want to upload to the
+Azure storage, the destination folder on Azure ML, and options to
+overwrite already existing files and see the progress of the whole
+process.
+
+\paragraph{model\_train\_base.yaml}
+Contains the hyperparameters that are used by the model during the
+training and evaluation. It also contains the option to load the
+pre-trained model.
+
+\paragraph{paths.yaml}
+This file contains all paths, or parts of paths, where the images are
+being stored, created, modified, and updated, and from which are loaded
+during the preprocessing. The whole folder structure for the
+preprocessing and pseudo-mask creation is created in the
+\texttt{./main.ipynb} notebook, where the full paths are built. Note that by default, all file manipulations are performed under
+the \texttt{/example\_data/} directory (unless changed in this config).
+For the demo, we recommend keeping this
+configuration file as is. For the real preprocessing, we advise changing the
+\texttt{root\_data\_dir} value to point to the \texttt{/data} directory.
+
+\subsection{\texttt{data} and \texttt{example\_data} directories}\label{data-and-example_data-directories}
+
+The \texttt{data} directory contains four main subdirectories. Here the
+images and annotations of the respective datasets reside
+(TIGER\footnote{\url{https://tiger.grand-challenge.org/Data/}} and TNBC\footnote{\url{https://zenodo.org/records/3552674}} datasets). The
+\texttt{/data/raw\_*} folders contain the raw images and annotations
+(bounding box for TIGER - in the COCO JSON format\footnote{\url{https://roboflow.com/formats/coco-json}}, PNG
+masks for TNBC). The \texttt{/data/preprocessed\_*} directories contain
+more subdirectories that are created during the run of the
+\texttt{./main.ipynb} notebook. The most important ones are:
+
+\begin{itemize}
+\item
+  \texttt{/data/preprocessed\_*/patches/images} which contains the
+  $128\!\times\!128$ normalized image patches
+\item
+  \texttt{/data/preprocessed\_*/patches/masks} which contains the
+  $128\!\times\!128$ mask (or pseudo-mask) patches
+\item
+  \texttt{/data/preprocessed\_tnbc/patches/folds} which contains TNBC
+  image and mask patches, but split into folds, where each fold directory
+  has \texttt{/data/preprocessed\_tnbc/patches/folds/fold\_*/images} and
+  \texttt{/data/preprocessed\_tnbc/patches/folds/fold\_*/masks} folder
+\end{itemize}
+
+Note that this directory is meant to be used for real preprocessing, and
+you need to put here the correct images and annotations yourself.
+
+The \texttt{/example\_data} directory follows the exact same structure,
+but already contains 10 example images from the TIGER dataset in the
+\texttt{/data/raw\_tiger/images} subdirectory, the
+\texttt{tiger-coco.json} file with the TIGER bounding box annotations in
+the \texttt{/data/raw\_tiger} subdirectory, and 4 images from the TNBC
+dataset in the \texttt{/data/raw\_tnbc/images} subdirectory and their
+corresponding masks in the \texttt{/data/raw\_tnbc/masks} subdirectory.
+This directory is by default listed as the \texttt{root\_data\_dir} in
+the \texttt{/configs/path.yaml} file, so in order to run the
+\hyperref[how-to-run-the-demo]{Demo} you do not need to change anything
+in the \texttt{/configs/path.yaml} file.
+
+\subsection{\texttt{models} directory}\label{models-directory}
+
+Here, the models that you wish to save and use for future fine-tuning or
+reference should be placed. We do not include any pre-trained model here,
+since the \texttt{.ckpt} files are around 300MB in size.
+
+\subsection{\texttt{src/azure} directory}\label{srcazure-directory}
+
+\paragraph{azure\_conda.yaml}
+Defines the dependencies that will be installed within Azure ML
+environment.
+
+\paragraph{azure\_train.ipynb}
+From this Jupyter notebook, the training is managed. This involves
+authenticating, pulling the correct data asset path, creating the
+environment, and submitting the job to Azure ML. Use the
+\texttt{/configs/azure\_connect\_example.json},
+\texttt{/configs/azure\_job.yaml} and
+\texttt{/configs/model\_train\_base.yaml} to manage the configuration of
+parameters.
+
+\paragraph{azure\_upload\_data.ipynb}
+This Jupyter notebook is used to upload a locally stored folder to the
+remote Azure ML data storage. Use the
+\texttt{/configs/azure\_upload\_data.yaml} to manage the configuration
+of parameters.
+
+\subsection{\texttt{src/models} directory}\label{srcmodels-directory}
+
+\paragraph{inference.ipynb}
+In this Jupyter notebook, you run the inference of the model. A
+pretrained model is required for this stage. The predictions are
+visualized. The inference is run on the
+\texttt{tnbc\_sample\_img\_patch} image from the
+\texttt{/configs/paths.yaml} configuration file.
+
+\paragraph{model\_factory.py}
+Here we define the architecture of the model.
+
+\paragraph{til\_dataset.py}
+This file defines a utility class that is used to output the image and
+mask pairs that are further used during the training and evaluation by
+the PyTorch \texttt{DataLoader}s.
+
+\subsection{\texttt{src/*.py} files}\label{src.py-files}
+
+\paragraph{image\_preprocessor.py}
+Contains the \texttt{ImageProcessor} class that groups all the
+preprocessing functionalities.
+
+\paragraph{image\_stats.py}
+Contains the \texttt{ImageStats} class that prints the statistics of the
+folder that contains images, like average image height, width, area,
+etc.
+
+\paragraph{mask\_generator.py}
+Contains the \texttt{MaskGenerator} class that groups all the
+mask-generating and mask-fusing functionalities.
+
+\paragraph{sample.py}
+Contains the \texttt{Sample} class that is used for visualization of the
+image and its mask.
+
+\paragraph{utils.py}
+Contains all other utility functionalities, for example, for opening and
+loading \texttt{.json} and \texttt{.yaml} files.
+
+\section{Installation guide}\label{installation-guide}
+
+\subsection{Prerequisites}\label{prerequisites}
+
+Below, we list the necessary software requirements: 
+
+\begin{itemize}
+    \item Python version 3.12+
+    \item \texttt{pip} version 23.2+
+    \item Internet access to download packages
+    \item Weights and Biases account for model logging
+    \item Azure ML
+access (if you wish to train models there)
+\end{itemize}
+
+\subsection{Clone the repository}\label{clone-the-repository}
+
+Clone this repository and navigate into it:
+
+\begin{bashlisting}
+git clone <repository-name>
+cd <cloned-repository-name>
+\end{bashlisting}
+
+Alternatively, you can download the \texttt{.zip} file of this project,
+unpack it, and open a terminal within it.
+
+\subsection{Set up the Python
+environment}\label{set-up-the-python-environment}
+
+Set up the virtual environment using \texttt{pip} (or create Conda
+environment, but we will be using \texttt{pip}).
+
+Using MacOS:
+
+\begin{bashlisting}
+python3 -m venv .venv
+source .venv/bin/activate
+\end{bashlisting}
+
+or Windows (from PowerShell):
+
+\begin{pslisting}
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1 
+\end{pslisting}
+
+\subsection{Install dependencies}\label{install-dependencies}
+
+Dependencies are listed in the \texttt{requirements.txt} file. To
+install them all, use:
+
+\begin{bashlisting}
+pip install -r requirements.txt
+\end{bashlisting}
+
+\section{How to run the Demo}
+\label{how-to-run-the-demo}
+
+Here we present a way to run the demo version (using the demo data
+placed in the \texttt{/example\_data} folder). Be aware of the fact,
+that since we only have 10 training images and 4 testing images in this
+demo, the model performance will be poor. This is just to showcase how
+the project works. Also, note that our project works with the PNG images only.
+
+\subsection{Preprocessing and pseudo-mask
+creation}\label{preprocessing-and-pseudo-mask-creation}
+
+\begin{enumerate}
+\item
+  Navigate to the \texttt{./main.ipynb} Jupyter notebook.
+  You will notice that the notebook is already run (for the
+  demonstration). Feel free to examine it before trying to run anything.
+\item
+  Next, make sure that you clear all outputs (to avoid any confusion)
+  and start running it cell after cell (or all at once). You will notice
+  that under the \texttt{/example\_data/processed\_*} directories,
+  different subdirectories will appear. Those will be populated with
+  different images or versions of images and masks during the
+  preprocessing and pseudo-mask creation. During the execution of the
+  cells, you will also see the textual and visual output responses.
+\item
+  After the whole notebook is executed, feel free to examine the different
+  subdirectories that were created - but be careful not to delete, move,
+  or rename any of them or their contents.
+\item
+  The data is now prepared for the training.
+\end{enumerate}
+
+\subsection{Training on Azure}\label{a-training-on-azure}
+
+Here we describe the necessary steps that are required to be
+able to train the model on the Azure ML platform.
+
+\begin{enumerate}
+\item Ensure you have access to an Azure ML workspace and all the required
+  information. Fill them in the
+  \texttt{/configs/azure\_connect\_example.json} configuration file.
+\item Ensure that the information in the
+  \texttt{/configs/azure\_upload\_data.yaml} configuration file is
+  correct. You will need to input the correct
+  \texttt{target\_path} as this is not provided by us!
+\item Then navigate into the \texttt{./src/azure/azure\_upload\_data.ipynb}
+  and run it cell by cell. Be especially careful with the local and
+  remote directory paths. The contents of the local directory will be
+  copied into the remote directory.
+\item After the data has been uploaded, you will need to create the Azure
+  Data Asset. See the official Azure documentation\footnote{\url{https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-data-assets}} how to do it.
+\item Then you will need to create an Azure compute instance. See this official Azure documentation\footnote{\url{https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-compute-instance}} for precise instructions.
+\item Next, you will need to modify \texttt{/configs/azure\_job.yaml} file,
+  as we cannot provide defaults for certain variables:
+  \begin{itemize}
+  \item
+    See the \texttt{dataset} top-level key. You need to input the
+    \texttt{name} of the Data Asset and its \texttt{version} you created
+    in Step 4.
+  \item
+    See the \texttt{job} top-level key. You need to change the
+    \texttt{job.compute} to have the name of the compute instance target
+    you created in Step 5.
+  \item
+    See the \texttt{jobs.args.wandb} key. You will need to input your
+    Weights and Biases key, so the training and evaluation process can
+    be monitored. See the official guide\footnote{\url{https://docs.wandb.ai/support/find_api_key/}} on how to get the key.
+  \end{itemize}
+\item
+  \emph{(Optional)} If you wish, you can try to change the model
+  parameters; you can do so in the
+  \texttt{/configs/model\_train\_base.yaml} file, but this step is
+  optional.
+\item
+  Now navigate to the
+  \texttt{./src/azure/azure\_train.ipynb} and follow
+  the instructions within it to submit the training and evaluation job
+  to the Azure ML platform.
+\item
+  During the training, you can see and monitor the whole process in your
+  Weights and Biases account.
+\item
+  After the training and evaluation are done, look for the
+  \texttt{outputs} folder in the job details on the Azure ML platform.
+  It should be in the \emph{Outputs + logs} tab, but the Azure ML
+  platform UI changes constantly.
+\item
+  You can download the trained model from the
+  \texttt{outputs/checkpoints/best.ckpt}. Be aware that the checkpoint
+  file is around 300MB in size.
+\end{enumerate}
+
+\subsection{Training locally}\label{b-training-locally}
+
+This option presents a way to run the training and evaluation
+locally. Note that the Demo will work just fine, since there is only a
+fraction of the size of a real dataset, but when training with a large
+dataset, the time to train the model locally can be significantly
+longer.
+
+Follow these steps:
+
+\begin{enumerate}
+    \item \emph{(Optional)} If you wish, you can try to change the model parameters in the \texttt{/configs/model\_train\_base.yaml} file, but this step is optional.
+    \item Run the \texttt{main.py} script. Be sure to input your correct Weights and Biases key. See the official guide\footnote{\url{https://docs.wandb.ai/support/find_api_key/}} on how to get the key.
+    \begin{bashlisting}
+python3 main.py \
+  --data_path './example_data' \
+  --wandb '<your-wandb-key>' \
+  --train_images_path 'processed_tiger/patches/images' \
+  --train_masks_path 'processed_tiger/patches/masks/fused_leave_1_out' \
+  --test_images_path 'processed_tnbc/patches/images' \
+  --test_masks_path 'processed_tnbc/patches/masks'
+\end{bashlisting}
+    
+    \item During the training, you can see and monitor the whole process in your Weights and Biases account.
+    \item Once the training finished, you will notice that a new \texttt{/outputs} directory was created. This contains both the trained model in the \texttt{/outputs/checkpoints/best.ckpt} file and the raw Weights and Biases logs in the \texttt{outputs/wandb} folder. Furthermore, it contains a \texttt{outputs/test\_results.json} with the evaluation metrics from the evaluation phase.
+\end{enumerate}
+
+\subsection{Inference}\label{inference}
+
+To see how the model works during inference, navigate
+to the \texttt{./src/models/inference.ipynb}. Notice
+that this notebook has already been executed as well; feel free to examine it and then
+clear the outputs (to avoid any confusion). You will need to
+input the path to the trained model \texttt{.ckpt} file, as we do
+not provide a trained model in the demo. Run the notebook and
+see the results!

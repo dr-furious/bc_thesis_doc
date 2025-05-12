@@ -27,6 +27,21 @@
 \usepackage{array} % For better table column definitions
 \usepackage{tablefootnote}  % for table footnotes
 \usepackage{pdfpages} % for embedding pdf
+\usepackage{verbatim} % for code formating
+\usepackage{pmboxdraw}           % declares box‐drawing glyph macros 
+\usepackage{newunicodechar}      % lets us assign Unicode → macro
+\newunicodechar{─}{\textSFx}     % U+2500 → \textSFx (light horizontal)
+\newunicodechar{│}{\textSFiii}   % U+2502 → \textSFiii (light vertical)
+\newunicodechar{├}{\textSFviii}  % U+251C → \textSFviii (tee right)
+\newunicodechar{└}{\textSFii}    % U+2514 → \textSFii  (tee up)
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{minted}                           % syntax highlighting via Pygments
+\usepackage[most]{tcolorbox}                  % loads skins, breakable, enhanced, etc.
+\tcbuselibrary{minted}
+
+% syntax highlighting
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
@@ -39,6 +54,35 @@
 \usepackage{acronym} % for abbreviation management
 \usepackage[colorlinks=false, pdfborder={0 0 0}]{hyperref} % for higlighting hyperrefernces in the document 
 \usepackage{textcomp} % Required for \textampersand
+
+\newtcblisting{bashlisting}{
+  listing engine=minted,
+  listing only,
+  minted language=bash,
+  minted options={linenos,fontsize=\small,breaklines},
+  colback=gray!10!white, colframe=gray!50!black,
+  arc=1mm, boxrule=0.5pt,
+  left=2mm,right=2mm,top=1mm,bottom=1mm,
+  fontupper=\ttfamily
+}
+
+\newtcblisting{pslisting}{
+  listing engine=minted,            % Use minted for highlighting
+  listing only,                     % Don’t typeset LaTeX—just code
+  minted language=powershell,       % Pygments PowerShell lexer
+  minted options={                  % Tweak line-numbering, wrapping, etc.
+    linenos,
+    fontsize=\small,
+    breaklines
+  },
+  colback=gray!10!white,            % Light gray background
+  colframe=gray!50!black,          % Green frame (match PowerShell’s theme)
+  arc=1mm,                          % Slightly rounded corners
+  boxrule=0.5pt,                    % Frame thickness
+  left=2mm, right=2mm,              % Horizontal padding
+  top=1mm, bottom=1mm,              % Vertical padding
+  fontupper=\ttfamily               % Monospaced font inside
+}
 
 % Spacing
 \setstretch{\mySpacing}
@@ -75,8 +119,6 @@
 % Listing as figure
 %\usepackage{libs/minted}
 %\usepackage[section]{minted}
-
-\usepackage{listing}
 
 % openright does not work :(
 \let\tmp\oddsidemargin
