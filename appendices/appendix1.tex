@@ -5,10 +5,11 @@
 \textbf{Bachelor's thesis evidence number:} FIIT-100241-116291
 
 \section{Winter Semester}
-In Table \ref{tab:winter_plan}, we can see a summarized plan of work for the winter semester. During this time, we familiarizing ourselves with the whole topic of weak segmentation and traditional methods of computer vision. We also explored the available datasets, and after we selected the TIGER dataset, we explored it in more depth. We were studying the state-of-the-art, gathering information, and running preliminary experiments. Later, we constructed an initial concept of experiments that should be performed. The experiments were performed more slowly than we anticipated because of the complicated dataset features, which caused us a slight delay, but on the other hand, we were now very confident with the dataset usage and knew better what we should do next to be successful.
+In Table \ref{tab:winter_plan}, we can see a summarized plan of work for the winter semester. During this time, we familiarizing ourselves with the whole topic of weak segmentation and traditional methods of computer vision. We also explored the available datasets, and after we selected the TIGER dataset, we explored it in more depth. We were studying the state-of-the-art work, gathering information, and running preliminary experiments. Later, we constructed an initial concept of experiments that should be performed. The experiments were performed more slowly than we anticipated because of the complicated dataset features, which caused us a slight delay, but on the other hand, we were now very confident with the dataset usage and knew better what we should do next to be successful.
 
 \begin{table}[h!]
 \centering
+\caption{Plan of Work for Winter Semester}
 \begin{tabular}{|c|p{12.5cm}|}
 \hline
 \textbf{Week} & \textbf{Planned Work} \\ 
@@ -25,7 +26,6 @@ In Table \ref{tab:winter_plan}, we can see a summarized plan of work for the win
 11-13 & Preparing mid-term report, finishing analysis, summarizing progress and findings. \\ 
 \hline
 \end{tabular}
-\caption{Plan of Work for Winter Semester}
 \label{tab:winter_plan}
 \end{table}
 
@@ -36,6 +36,7 @@ Given the many challenges we had to overcome, like the weakly annotated TIGER da
 
 \begin{table}[h!]
 \centering
+\caption{Plan of Work for Summer Semester}
 \begin{tabular}{|c|p{12.5cm}|}
 \hline
 \textbf{Week} & \textbf{Planned Work} \\ 
@@ -54,7 +55,6 @@ Given the many challenges we had to overcome, like the weakly annotated TIGER da
 13 & Submission of final thesis. \\ 
 \hline
 \end{tabular}
-\caption{Plan of Work for Summer Semester}
 \label{tab:summer_plan}
 \end{table}
 
@@ -68,7 +68,7 @@ Given the many challenges we had to overcome, like the weakly annotated TIGER da
 \verbatiminput{assets/folder-tree.txt}
 
 \section{Description of folders and
-files}\label{description-of-folders-and-files}
+files}\label{sec:description-of-folders-and-files}
 
 \subsection{\texttt{root} directory}\label{root-directory-files}
 
@@ -131,7 +131,7 @@ being stored, created, modified, and updated, and from which are loaded
 during the preprocessing. The whole folder structure for the
 preprocessing and pseudo-mask creation is created in the
 \texttt{./main.ipynb} notebook, where the full paths are built. Note that by default, all file manipulations are performed under
-the \texttt{/example\_data/} directory (unless changed in this config).
+the \texttt{/example\_data} directory (unless changed in this config).
 For the demo, we recommend keeping this
 configuration file as is. For the real preprocessing, we advise changing the
 \texttt{root\_data\_dir} value to point to the \texttt{/data} directory.
@@ -139,8 +139,8 @@ configuration file as is. For the real preprocessing, we advise changing the
 \subsection{\texttt{data} and \texttt{example\_data} directories}\label{data-and-example_data-directories}
 
 The \texttt{data} directory contains four main subdirectories. Here the
-images and annotations of the respective datasets reside
-(TIGER\footnote{\url{https://tiger.grand-challenge.org/Data/}} and TNBC\footnote{\url{https://zenodo.org/records/3552674}} datasets). The
+images and annotations of the respective datasets should reside
+(TIGER\footnote{\url{https://tiger.grand-challenge.org/Data/}} and TNBC\footnote{\url{https://zenodo.org/records/3552674}} datasets). We do not include the actual images and masks here, because of their large size, but when running a real preprocessing, you should place them here and change the \texttt{root\_data\_dir} value in the \texttt{/configs/paths.yaml} file to point to the \texttt{/data} directory. The
 \texttt{/data/raw\_*} folders contain the raw images and annotations
 (bounding box for TIGER - in the COCO JSON format\footnote{\url{https://roboflow.com/formats/coco-json}}, PNG
 masks for TNBC). The \texttt{/data/preprocessed\_*} directories contain
@@ -157,14 +157,15 @@ more subdirectories that are created during the run of the
 \item
   \texttt{/data/preprocessed\_tnbc/patches/folds} which contains TNBC
   image and mask patches, but split into folds, where each fold directory
-  has \texttt{/data/preprocessed\_tnbc/patches/folds/fold\_*/images} and
+  has \\
+  \texttt{/data/preprocessed\_tnbc/patches/folds/fold\_*/images} and \\
   \texttt{/data/preprocessed\_tnbc/patches/folds/fold\_*/masks} folder
 \end{itemize}
 
 Note that this directory is meant to be used for real preprocessing, and
 you need to put here the correct images and annotations yourself.
 
-The \texttt{/example\_data} directory follows the exact same structure,
+The \texttt{/example\_data} directory follows the same structure,
 but already contains 10 example images from the TIGER dataset in the
 \texttt{/data/raw\_tiger/images} subdirectory, the
 \texttt{tiger-coco.json} file with the TIGER bounding box annotations in
@@ -191,15 +192,15 @@ environment.
 \paragraph{azure\_train.ipynb}
 From this Jupyter notebook, the training is managed. This involves
 authenticating, pulling the correct data asset path, creating the
-environment, and submitting the job to Azure ML. Use the
+environment, and submitting the job to Azure ML. Use the \\
 \texttt{/configs/azure\_connect\_example.json},
-\texttt{/configs/azure\_job.yaml} and
+\texttt{/configs/azure\_job.yaml} and \\
 \texttt{/configs/model\_train\_base.yaml} to manage the configuration of
 parameters.
 
 \paragraph{azure\_upload\_data.ipynb}
 This Jupyter notebook is used to upload a locally stored folder to the
-remote Azure ML data storage. Use the
+remote Azure ML data storage. Use the \\
 \texttt{/configs/azure\_upload\_data.yaml} to manage the configuration
 of parameters.
 
@@ -303,9 +304,8 @@ pip install -r requirements.txt
 \label{how-to-run-the-demo}
 
 Here we present a way to run the demo version (using the demo data
-placed in the \texttt{/example\_data} folder). Be aware of the fact,
-that since we only have 10 training images and 4 testing images in this
-demo, the model performance will be poor. This is just to showcase how
+placed in the \texttt{/example\_data} folder). Be aware of the fact that since we only have 10 training images and 4 testing images in this
+demo, the model's performance will not be representative of real‐world results. This is just to showcase how
 the project works. Also, note that our project works with the PNG images only.
 
 \subsection{Preprocessing and pseudo-mask
@@ -314,7 +314,7 @@ creation}\label{preprocessing-and-pseudo-mask-creation}
 \begin{enumerate}
 \item
   Navigate to the \texttt{./main.ipynb} Jupyter notebook.
-  You will notice that the notebook is already run (for the
+  You will notice that the notebook has already been executed (for the
   demonstration). Feel free to examine it before trying to run anything.
 \item
   Next, make sure that you clear all outputs (to avoid any confusion)
@@ -416,13 +416,16 @@ python3 main.py \
 \end{bashlisting}
     
     \item During the training, you can see and monitor the whole process in your Weights and Biases account.
-    \item Once the training finished, you will notice that a new \texttt{/outputs} directory was created. This contains both the trained model in the \texttt{/outputs/checkpoints/best.ckpt} file and the raw Weights and Biases logs in the \texttt{outputs/wandb} folder. Furthermore, it contains a \texttt{outputs/test\_results.json} with the evaluation metrics from the evaluation phase.
+    \item Once the training finished, you will notice that a new \texttt{/outputs} directory was created. This contains both the trained model in the \\
+    \texttt{/outputs/checkpoints/best.ckpt} file and the raw Weights and Biases logs in the \texttt{outputs/wandb} folder. Furthermore, it contains a \\
+    \texttt{outputs/test\_results.json} with the evaluation metrics from the evaluation phase.
 \end{enumerate}
 
 \subsection{Inference}\label{inference}
 
 To see how the model works during inference, navigate
-to the \texttt{./src/models/inference.ipynb}. Notice
+to the \\
+\texttt{./src/models/inference.ipynb}. Notice
 that this notebook has already been executed as well; feel free to examine it and then
 clear the outputs (to avoid any confusion). You will need to
 input the path to the trained model \texttt{.ckpt} file, as we do

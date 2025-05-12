@@ -198,7 +198,7 @@ Firstly, we tried a randomly selected single image as a reference image for Mace
 
 % Image
 
-\subsection{Pseudo-mask sources} 
+\subsection{Pseudo-mask Sources} 
 \label{subs:mask-sources}
 The next step was to generate the pseudo-masks. For this, we created different variations of the same image. We named the images that were created as a part of one variation \textit{image source}. In total, six different image sources were created for the experiments. We used the original (raw) image as one source, then the normalized image as another source. Furthermore, we extracted the hematoxylin image out of the original image (Macenko normalization does this internally). This was done based on the fact that hematoxylin highlights the cell nuclei, as we described in Chapter \ref{chapter:intro}. This hematoxylin image became our third image source. Lastly, by applying histogram equalization to all of the aforementioned image sources (to increase the overall contrast of the image and shift dark colors into darker ones and light into lighter ones), we obtained another three image sources. The difference in the image sources can be seen in Figure \ref{fig:tiger-sources}. 
 
@@ -247,7 +247,7 @@ The next step was to generate the pseudo-masks. For this, we created different v
 
 We then operated on each image source with different computer vision techniques to generate the final pseudo-mask PNGs. We describe each of these techniques in Section \ref{section:mask-generation}. 
 
-\subsection{Aligning the TNBC dataset} 
+\subsection{Aligning the TNBC Dataset} 
 To use the TNBC dataset, we needed to align its scale and the ground truth masks. This dataset was scanned with the $40\!\times\!$ magnification; however, the TIGER dataset was scanned using the $20\!\times\!$ magnification. To align them, we down-scaled the TNBC dataset images and masks by a factor of 2. Moreover, the TNBC ground truth masks were relabeled to binary masks by setting all of the other labels except for the lymphocyte cell labels as background.
 
 \subsection{Patching Strategy}
@@ -426,6 +426,7 @@ The experiment ran on average around 35 epochs due to early stopping. From the t
 
 \begin{table}[H]
 \centering
+\caption{Results of the model trained on the TNBC dataset.}
 \begin{tabular}{ p{5.0cm} | p{5.0cm} }
 \hline
 \textbf{Metric} & \textbf{Value (\%)} \\ 
@@ -434,7 +435,6 @@ Dice coefficient &  18.91 \\
 IoU &  10.64 \\ 
 \hline
 \end{tabular}
-\caption{Results of the model trained on the TNBC dataset.}
 \label{tab:exp1-metrics}
 \end{table}
 
@@ -520,6 +520,7 @@ On the qualitative side, we can see in Figure \ref{fig:exp2-results} that the be
 
 \begin{table}[H]
   \centering
+  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask generation strategies.}
   \begin{tabular}{ l | c | c | c | c } 
     \hline
     \textbf{Image Source\tablefootnote{HE: histogram-equalized}}    & \textbf{Blurred}  & \textbf{Threshold Type} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
@@ -552,7 +553,6 @@ On the qualitative side, we can see in Figure \ref{fig:exp2-results} that the be
     hematoxylin HE& no  & otsu     & \textbf{52.57} & \textbf{36.01} \\
     \hline
   \end{tabular}
-  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask generation strategies.}
   \label{tab:gen-res}
 \end{table}
 
@@ -626,6 +626,7 @@ When we compare the best model from this experiment - the consensus model (53.53
 
 \begin{table}[H]
   \centering
+  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask fusion strategies.}
   \begin{tabular}{ l | l | c | c } 
     \hline
     \textbf{Masks Set Type} & \textbf{Mask Set} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
@@ -641,7 +642,6 @@ When we compare the best model from this experiment - the consensus model (53.53
       quartile  & top 25\%    & 42.59 & 27.61 \\
     \hline
   \end{tabular}
-  \caption{Dice and IoU percentages for the models trained on different pseudo‐mask fusion strategies.}
   \label{tab:fusion-strategies}
 \end{table}
 
@@ -731,6 +731,7 @@ Finally, in Figure \ref{fig:exp4-results} we observe a similar behavior to the b
 
 \begin{table}[H]
   \centering
+  \caption{Dice and IoU percentages for the models fine-tuned on the TNBC dataset.}
   \begin{tabular}{ p{5cm} | p{3cm} | p{3cm} } 
     \hline
     \textbf{Encoder status} & \textbf{Dice (\%)} & \textbf{IoU (\%)} \\
@@ -739,7 +740,6 @@ Finally, in Figure \ref{fig:exp4-results} we observe a similar behavior to the b
       Frozen   & \textbf{57.59} & \textbf{41.25} \\
     \hline
   \end{tabular}
-  \caption{Dice and IoU percentages for the models fine-tuned on the TNBC dataset.}
   \label{tab:transfer}
 \end{table}
 
@@ -798,6 +798,7 @@ To summarize the experiments, we decided to put the evaluation metrics of the be
 
 \begin{table}[H]
   \centering
+  \caption{Comparison of best Dice and IoU across experiments.}
   \begin{tabular}{ l | c | c } 
     \hline
     \textbf{Experiment}                                  & \textbf{Best Dice (\%)} & \textbf{Best IoU (\%)} \\
@@ -808,7 +809,6 @@ To summarize the experiments, we decided to put the evaluation metrics of the be
     4 – Transfer Learning                                & \textbf{57.59}          & \textbf{41.45}          \\
     \hline
   \end{tabular}
-  \caption{Comparison of best Dice and IoU across experiments.}
   \label{tab:summary-experiments}
 \end{table}
 

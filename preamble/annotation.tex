@@ -53,9 +53,9 @@ Vedúci bakalárskeho projektu: \mySupervisor
 \end{minipage}
 
 \bigskip{}
-
+\begin{otherlanguage}{slovak}
 V tejto práci sa zaoberáme technikami slabej segmentácie v digitálnej patológii so zameraním na segmentáciu jadier lymfocytov u pacientov s rakovinou prsníka. Hlavná výzva vyplýva zo slabých anotácií jadier vo forme ohraničujúcich rámčekov namiesto presných masiek na úrovni pixelov. Na riešenie tejto výzvy zavádzame hybridný prístup, kde používame tradičné techniky počítačového videnia, ako sú Otsu a adaptívne prahovanie, a značkami-riadený algoritmus watershed, na vytvorenie pseudo-masiek, ktoré sa používajú na trénovanie modelu U-Net. Ukazujeme, že použitie malého, plne anotovaného datasetu je na trénovanie modelu nedostatočné. Ďalej vyskúšame trénovať model na pseudo-maskách vytvorených rôznymi metódami počítačového videnia na veľkom, slabo anotovanom datasete. Aby sme využili kombinovanú silu rôznych pseudo-masiek, vytvoríme ich druhú generáciu vyskúšaním rôznych stratégií zlúčenia. Nakoniec použijeme prístup učenia s prenosom, kde sa model predtrénovaný na veľkom datasete s pseudo-maskami dotrénuje na malom, plne anotovanom datasete, pričom tento model dosiahol najlepšie výsledky. Každý model hodnotíme pomocou kvantitatívnych metrík, ako sú Dice koeficient a IoU, a kvalitatívnych metrík vizualizáciou jeho predpovedí.
-
+\end{otherlanguage}
 % slovak annotation content here
 
 
